@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bike In Paris — Projet Abel Dompnier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#fff;
+  --dark:#0A0A0A;
+  --sand:#F4F1EB;
+  --blue:#0055FF;
+  --blue-dim:rgba(0,85,255,.1);
+  --blue-light:#EEF3FF;
+  --border:#EBEBEB;
+  --text:#0A0A0A;
+  --t2:#666;
+  --t3:#aaa;
+  --r:12px;
+  --expo:cubic-bezier(0.16,1,0.3,1);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);cursor:none;overflow-x:hidden;}
+
+/* CURSOR */
+#cursor{position:fixed;width:9px;height:9px;background:#fff;mix-blend-mode:difference;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cursor-ring{position:fixed;width:34px;height:34px;border:1.5px solid rgba(0,85,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .22s,height .22s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(255,255,255,0);transition:background .4s,border-color .4s;}
+nav.scrolled{background:rgba(255,255,255,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-back{display:flex;align-items:center;gap:.55rem;color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;cursor:none;}
+.nav-back:hover{color:var(--blue);}
+.nav-back svg{width:15px;height:15px;stroke:currentColor;fill:none;transition:transform .2s;}
+.nav-back:hover svg{transform:translateX(-3px);}
+.nav-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;}
+.nav-title span{color:var(--blue);}
+
+/* ANIMATIONS */
+.clip-up{clip-path:inset(0 0 100% 0);transition:clip-path 1.15s var(--expo);}
+.clip-up.in{clip-path:inset(0 0 0% 0);}
+.lr{display:block;overflow:hidden;}
+.lr span{display:block;transform:translateY(110%);transition:transform 1s var(--expo);}
+.lr.in span{transform:translateY(0);}
+.fu{opacity:0;transform:translateY(30px);transition:opacity .9s ease,transform .9s var(--expo);}
+.fu.in{opacity:1;transform:translateY(0);}
+.fi{opacity:0;transition:opacity 1.1s ease;}
+.fi.in{opacity:1;}
+.sg > *{opacity:0;transform:translateY(22px);transition:opacity .75s ease,transform .75s var(--expo);}
+.sg.in > *{opacity:1;transform:translateY(0);}
+.sg.in > *:nth-child(2){transition-delay:.08s;}
+.sg.in > *:nth-child(3){transition-delay:.16s;}
+.sg.in > *:nth-child(4){transition-delay:.24s;}
+.sg.in > *:nth-child(5){transition-delay:.32s;}
+.sg.in > *:nth-child(6){transition-delay:.40s;}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:44% 56%;overflow:hidden;}
+.hero-logo-panel{background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8rem 3rem 5rem;gap:1.5rem;position:relative;}
+.hero-logo-panel::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:rgba(255,255,255,.06);}
+.hero-logo-velo{width:min(220px,80%);object-fit:contain;filter:drop-shadow(0 0 40px rgba(0,120,255,.35));}
+.hero-logo-titre{width:min(200px,75%);object-fit:contain;margin-top:.5rem;}
+.hero-badge{margin-top:1rem;font-size:.67rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:.35rem 1rem;}
+.hero-right{display:flex;flex-direction:column;justify-content:center;padding:9rem 5% 6rem 5%;background:var(--bg);}
+.hero-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);margin-bottom:2.2rem;display:flex;align-items:center;gap:.7rem;}
+.hero-eyebrow::before{content:'';width:22px;height:2px;background:var(--blue);border-radius:2px;}
+h1.bip-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(3.8rem,7vw,6rem);font-weight:700;line-height:.97;letter-spacing:-.05em;margin-bottom:2rem;}
+h1.bip-title .blue{color:var(--blue);}
+.hero-desc{color:var(--t2);font-size:.96rem;line-height:1.88;max-width:440px;margin-bottom:2.2rem;}
+.hero-desc strong{color:var(--text);}
+.hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--dark);border-radius:var(--r);overflow:hidden;margin-bottom:2rem;}
+.kpi{padding:1.1rem .8rem;text-align:center;border-right:1px solid rgba(255,255,255,.07);}
+.kpi:last-child{border-right:none;}
+.kpi-num{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;line-height:1;}
+.kpi-label{font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.3rem;letter-spacing:.06em;}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:var(--blue);color:#fff;padding:.9rem 2rem;border-radius:50px;font-size:.86rem;font-weight:600;text-decoration:none;transition:all .25s;cursor:none;}
+.btn-primary:hover{background:#003FCC;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,85,255,.3);}
+.btn-site{display:inline-flex;align-items:center;gap:.5rem;background:transparent;color:var(--text);padding:.9rem 2rem;border-radius:50px;font-size:.86rem;font-weight:600;text-decoration:none;border:1.5px solid rgba(10,10,10,.2);transition:all .25s;cursor:none;}
+.btn-site:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px);}
+
+/* SECTION BASE */
+.s-wrap{padding:8rem 5%;}
+.s-inner{max-width:1200px;margin:0 auto;}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);margin-bottom:.8rem;display:block;}
+.dark-sec .eyebrow{color:rgba(255,255,255,.38);}
+.s-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,3.4vw,2.8rem);font-weight:700;letter-spacing:-.04em;line-height:1.06;margin-bottom:1rem;}
+.dark-sec .s-h{color:#fff;}
+.s-p{color:var(--t2);font-size:.94rem;line-height:1.82;max-width:540px;}
+.dark-sec .s-p{color:rgba(255,255,255,.5);}
+
+/* CONCEPT */
+#concept{background:var(--bg);}
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;margin-top:3.5rem;}
+.concept-text p{color:var(--t2);line-height:1.88;font-size:.93rem;margin-bottom:1.1rem;}
+.concept-text p strong{color:var(--blue);}
+.concept-quote{border-left:3px solid var(--blue);padding:1.2rem 1.5rem;margin-top:2rem;background:var(--blue-light);border-radius:0 var(--r) var(--r) 0;}
+.concept-quote p{color:var(--text);font-style:italic;font-size:.91rem;line-height:1.7;}
+.concept-quote cite{display:block;color:var(--t3);font-size:.78rem;margin-top:.55rem;}
+.concept-aside{display:flex;flex-direction:column;gap:1rem;}
+.aside-card{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1.5rem;}
+.aside-card h4{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;margin-bottom:.5rem;}
+.aside-card p{font-size:.82rem;color:var(--t2);line-height:1.65;}
+.target-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.chip{background:var(--blue-dim);border:1px solid rgba(0,85,255,.15);border-radius:50px;padding:.28rem .85rem;font-size:.73rem;color:var(--blue);font-weight:500;}
+
+/* DÉMARCHE */
+#demarche{background:var(--dark);}
+.demarche-header{margin-bottom:3.5rem;}
+.demarche-flow{display:flex;flex-direction:column;gap:0;border-top:1px solid rgba(255,255,255,.07);}
+.flow-row{display:grid;grid-template-columns:200px 1fr;gap:3rem;padding:2rem 0;border-bottom:1px solid rgba(255,255,255,.07);transition:background .22s;}
+.flow-row:hover{background:rgba(255,255,255,.02);padding-left:1rem;padding-right:1rem;margin:0 -1rem;}
+.flow-num{font-family:'Space Grotesk',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);padding-top:.2rem;}
+.flow-content h4{font-family:'Space Grotesk',sans-serif;font-size:.98rem;font-weight:600;color:#fff;margin-bottom:.45rem;}
+.flow-content p{font-size:.86rem;color:rgba(255,255,255,.5);line-height:1.72;}
+.flow-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem;}
+.flow-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.25rem .75rem;border-radius:50px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.45);}
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.9rem;}
+.swot-card{padding:.9rem 1rem;border-radius:10px;font-size:.81rem;line-height:1.6;}
+.swot-card h5{font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem;}
+.swot-card.forces{background:rgba(0,85,255,.18);color:rgba(255,255,255,.7);}.swot-card.forces h5{color:#7BA7FF;}
+.swot-card.faiblesses{background:rgba(255,100,0,.14);color:rgba(255,255,255,.7);}.swot-card.faiblesses h5{color:#FF9966;}
+.swot-card.opportunites{background:rgba(0,200,100,.12);color:rgba(255,255,255,.7);}.swot-card.opportunites h5{color:#66EEA0;}
+.swot-card.menaces{background:rgba(255,50,50,.12);color:rgba(255,255,255,.7);}.swot-card.menaces h5{color:#FF8888;}
+
+/* 4P */
+#quatrep{background:var(--sand);}
+.quatrep-header{margin-bottom:3rem;}
+.p4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.p4-card{background:var(--bg);border:1.5px solid var(--border);border-radius:18px;padding:1.8rem 1.5rem;transition:border-color .25s,transform .25s,box-shadow .25s;}
+.p4-card:hover{border-color:var(--blue);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,85,255,.09);}
+.p4-letter{font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--blue);line-height:1;margin-bottom:.4rem;opacity:.15;}
+.p4-name{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:.9rem;color:var(--text);}
+.p4-card ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.p4-card ul li{font-size:.8rem;color:var(--t2);line-height:1.55;padding-left:.9rem;position:relative;}
+.p4-card ul li::before{content:'—';position:absolute;left:0;color:var(--blue);font-size:.7rem;}
+
+/* VEHICLE */
+#vehicle{background:var(--bg);}
+.vehicle-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-top:3rem;}
+.vehicle-photo{background:#f7f7f7;border:1.5px solid var(--border);border-radius:20px;padding:3rem;display:flex;align-items:center;justify-content:center;min-height:300px;}
+.vehicle-photo img{max-width:100%;max-height:280px;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,85,255,.1));}
+.specs{display:flex;flex-direction:column;gap:.75rem;}
+.spec{display:flex;gap:1rem;align-items:center;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.2rem;transition:all .25s;}
+.spec:hover{border-color:var(--blue);transform:translateX(4px);}
+.spec-icon{width:40px;height:40px;background:var(--blue-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.spec-name{font-size:.86rem;font-weight:600;margin-bottom:.12rem;}
+.spec-val{font-size:.77rem;color:var(--t2);}
+
+/* DISTRIBUTION */
+#distribution{background:var(--dark);}
+.distrib-header{margin-bottom:3rem;}
+.distrib-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.phase-block{margin-bottom:2rem;}
+.phase-title{font-family:'Space Grotesk',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid rgba(255,255,255,.07);}
+.platform-list{display:flex;flex-direction:column;gap:.65rem;}
+.platform-item{display:flex;align-items:center;gap:1rem;padding:.9rem 1.1rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;transition:all .22s;}
+.platform-item:hover{background:rgba(255,255,255,.07);border-color:rgba(0,85,255,.4);}
+.platform-icon{width:36px;height:36px;background:rgba(0,85,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.platform-text h4{font-size:.84rem;font-weight:600;color:#fff;margin-bottom:.1rem;}
+.platform-text p{font-size:.76rem;color:rgba(255,255,255,.4);line-height:1.45;}
+.platform-status{margin-left:auto;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .65rem;border-radius:50px;flex-shrink:0;}
+.status-active{background:rgba(0,200,80,.15);color:#44E88A;border:1px solid rgba(0,200,80,.2);}
+.status-soon{background:rgba(0,85,255,.15);color:#7BA7FF;border:1px solid rgba(0,85,255,.2);}
+.roadmap-card{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:14px;padding:1.8rem;}
+.roadmap-card h4{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;color:#fff;margin-bottom:.5rem;}
+.roadmap-card p{font-size:.86rem;color:rgba(255,255,255,.5);line-height:1.72;margin-bottom:1rem;}
+.roadmap-chip{display:inline-flex;align-items:center;gap:.4rem;background:var(--blue);color:#fff;border-radius:50px;padding:.35rem .95rem;font-size:.73rem;font-weight:600;}
+.roadmap-chip::before{content:'→';}
+
+/* PROCESS */
+#process{background:var(--sand);}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:3.5rem;position:relative;}
+.process-steps::before{content:'';position:absolute;top:34px;left:13%;right:13%;height:1px;background:rgba(0,0,0,.1);z-index:0;}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;}
+.step-num{width:68px;height:68px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;color:var(--blue);margin-bottom:1.2rem;transition:all .25s;}
+.step:hover .step-num{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 8px 24px rgba(0,85,255,.25);}
+.step h3{font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;margin-bottom:.4rem;}
+.step p{font-size:.78rem;color:var(--t2);line-height:1.6;}
+
+/* SITE INTERNET */
+#website{background:var(--bg);}
+.website-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-top:3rem;}
+.website-mockup{background:var(--dark);border-radius:18px;overflow:hidden;padding:2.5rem;display:flex;flex-direction:column;gap:1.5rem;}
+.wm-bar{display:flex;align-items:center;gap:.5rem;}
+.wm-dot{width:10px;height:10px;border-radius:50%;}
+.wm-url{background:rgba(255,255,255,.08);border-radius:6px;padding:.4rem 1rem;font-size:.72rem;color:rgba(255,255,255,.45);flex:1;}
+.wm-preview{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1.8rem;text-align:center;}
+.wm-icon{font-size:2.5rem;margin-bottom:.8rem;}
+.wm-preview h4{font-family:'Space Grotesk',sans-serif;color:#fff;font-size:.95rem;font-weight:600;margin-bottom:.4rem;}
+.wm-preview p{font-size:.78rem;color:rgba(255,255,255,.4);}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:1.2rem;}
+.menu-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9rem;display:flex;align-items:center;gap:.8rem;transition:all .22s;}
+.menu-card:hover{background:rgba(255,255,255,.1);}
+.menu-card img{width:46px;height:46px;object-fit:contain;border-radius:7px;flex-shrink:0;}
+.menu-card-label{font-size:.78rem;font-weight:600;line-height:1.3;color:rgba(255,255,255,.7);}
+.website-text p{color:var(--t2);line-height:1.88;font-size:.93rem;margin-bottom:1rem;}
+.website-text strong{color:var(--text);}
+.construction-banner{background:var(--dark);border-radius:14px;padding:1.5rem 1.8rem;margin-top:2rem;display:flex;align-items:flex-start;gap:1.2rem;}
+.cb-icon{font-size:1.6rem;flex-shrink:0;}
+.cb-content h4{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:600;color:#fff;margin-bottom:.35rem;}
+.cb-content p{font-size:.81rem;color:rgba(255,255,255,.5);line-height:1.65;}
+.cb-content a{color:var(--blue);text-decoration:none;font-weight:600;}
+.cb-content a:hover{text-decoration:underline;}
+.tech-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem;}
+
+/* IDENTITÉ */
+#identity{background:var(--sand);}
+.identity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem;}
+.sticker-card{background:var(--bg);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;transition:border-color .25s,transform .28s,box-shadow .28s;}
+.sticker-card:hover{border-color:var(--blue);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,85,255,.1);}
+.sticker-img{padding:2rem;display:flex;align-items:center;justify-content:center;min-height:180px;background:#f7f7f7;}
+.sticker-img.dark{background:var(--dark);}
+.sticker-img img{max-height:130px;max-width:100%;object-fit:contain;}
+.sticker-info{padding:1.2rem;border-top:1px solid var(--border);}
+.sticker-info h3{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;margin-bottom:.35rem;}
+.sticker-info p{font-size:.8rem;color:var(--t2);line-height:1.6;}
+
+/* CHIFFRES CLÉS */
+#chiffres{background:var(--blue);padding:7rem 5%;}
+.chiffres-inner{max-width:1200px;margin:0 auto;}
+.chiffres-inner .eyebrow{color:rgba(255,255,255,.4);}
+.chiffres-inner .s-h{color:#fff;margin-bottom:3rem;}
+.chiffres-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.1);}
+.chiffre-card{background:var(--blue);padding:2.6rem 2rem;text-align:center;transition:background .25s;}
+.chiffre-card:hover{background:rgba(0,0,0,.15);}
+.chiffre-num{font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;color:#fff;line-height:1;margin-bottom:.4rem;}
+.chiffre-label{font-size:.82rem;color:rgba(255,255,255,.55);}
+
+/* FOOTER */
+.page-footer{padding:2.8rem 5%;background:var(--dark);display:flex;align-items:center;justify-content:space-between;}
+.back-btn{display:inline-flex;align-items:center;gap:.55rem;color:rgba(255,255,255,.45);text-decoration:none;font-size:.82rem;font-weight:500;border:1.5px solid rgba(255,255,255,.12);padding:.6rem 1.35rem;border-radius:50px;transition:all .22s;cursor:none;}
+.back-btn:hover{border-color:rgba(255,255,255,.4);color:#fff;}
+.next-btn{display:inline-flex;align-items:center;gap:.55rem;color:#fff;text-decoration:none;font-size:.82rem;font-weight:600;background:rgba(255,255,255,.09);padding:.6rem 1.35rem;border-radius:50px;transition:all .22s;border:1.5px solid rgba(255,255,255,.12);cursor:none;}
+.next-btn:hover{background:var(--blue);border-color:var(--blue);}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  #hero{grid-template-columns:1fr;}
+  .hero-logo-panel{min-height:40vw;padding:5rem 3rem;}
+  .concept-grid,.vehicle-grid,.distrib-layout,.website-grid{grid-template-columns:1fr;}
+  .p4-grid{grid-template-columns:1fr 1fr;}
+  .process-steps{grid-template-columns:1fr 1fr;}
+  .process-steps::before{display:none;}
+  .chiffres-grid{grid-template-columns:1fr 1fr;}
+  .identity-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  h1.bip-title{font-size:clamp(3rem,12vw,4rem);}
+  .p4-grid,.identity-grid,.chiffres-grid,.hero-kpis{grid-template-columns:1fr 1fr;}
+  .process-steps{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Retour au portfolio
+  </a>
+  <div class="nav-title">Bike <span>In Paris</span></div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-logo-panel">
+    <img src="assets/bip_logo_velo.png" alt="Bike In Paris logo vélo" class="hero-logo-velo clip-up">
+    <img src="assets/bip_logo_titre.png" alt="Bike In Paris titre" class="hero-logo-titre fu" style="transition-delay:.3s">
+    <div class="hero-badge fu" style="transition-delay:.5s">Service premium · Paris</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-eyebrow fu">Projet 2025 — En cours</div>
+    <h1 class="bip-title">
+      <span class="lr"><span><span class="blue">Bike</span></span></span>
+      <span class="lr"><span>In Paris</span></span>
+    </h1>
+    <p class="hero-desc fu" style="transition-delay:.15s">
+      Service premium de location courte durée de <strong>vélos électriques bi-places ultra-confortables</strong>, avec livraison et récupération sur rendez-vous partout dans Paris. Tout inclus : antivol, alarme, casque.
+    </p>
+    <div class="hero-kpis fu" style="transition-delay:.22s">
+      <div class="kpi"><div class="kpi-num">60–90€</div><div class="kpi-label">Par jour</div></div>
+      <div class="kpi"><div class="kpi-num">1–7j</div><div class="kpi-label">Durée</div></div>
+      <div class="kpi"><div class="kpi-num">2</div><div class="kpi-label">Vélos flotte</div></div>
+      <div class="kpi"><div class="kpi-num">100%</div><div class="kpi-label">Livraison</div></div>
+    </div>
+    <div class="fu" style="transition-delay:.32s;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+      <a href="#concept" class="btn-primary">Découvrir le projet ↓</a>
+      <a href="https://bikeinparis.com" target="_blank" rel="noopener" class="btn-site">bikeinparis.com ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LE CONCEPT ══ -->
+<section id="concept" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">01 — Le concept</span>
+      <h2 class="s-h">Une expérience de visite haut de gamme</h2>
+    </div>
+    <div class="concept-grid">
+      <div class="concept-text fu">
+        <p>J'ai créé <strong>Bike In Paris</strong> en mobilisant les compétences acquises en <strong>BUT Techniques de Commercialisation</strong> : étude de marché, stratégie marketing, techniques de vente et communication. Ce projet est la concrétisation directe de ma formation — de l'analyse concurrentielle jusqu'au lancement opérationnel.</p>
+        <p>Mon concept : offrir une expérience de visite haut de gamme dans la capitale avec des <strong>vélos électriques bi-places ultra-confortables</strong>, livrés et récupérés sur rendez-vous partout dans Paris, avec tous les accessoires de sécurité inclus (antivol, alarme, casque).</p>
+        <p>J'ai ciblé spécifiquement les <strong>touristes, les couples et les citadins curieux</strong> au pouvoir d'achat moyen à élevé. Je me suis concentré sur une <strong>phase de lancement confidentielle</strong> en passant par des plateformes tierces afin de rôder la logistique et de valider le concept auprès de mes premiers clients.</p>
+      </div>
+      <div class="concept-aside fu" style="transition-delay:.12s">
+        <div class="aside-card">
+          <h4>🎯 Positionnement</h4>
+          <p>Segment encore peu exploité : le vélo électrique bi-place premium avec livraison à domicile. Ni Vélib', ni trottinette — une expérience unique à Paris.</p>
+        </div>
+        <div class="aside-card">
+          <h4>👥 Cœur de cible</h4>
+          <p>Touristes, couples, citadins curieux au pouvoir d'achat moyen à élevé, à la recherche d'une expérience de visite <strong>pratique et éco-responsable</strong>.</p>
+          <div class="target-chips">
+            <span class="chip">Touristes</span>
+            <span class="chip">Couples</span>
+            <span class="chip">Citadins</span>
+            <span class="chip">Éco-responsables</span>
+          </div>
+        </div>
+        <div class="aside-card">
+          <h4>📦 Inclus dans chaque location</h4>
+          <p>Vélo bi-place + livraison sur RDV + récupération + antivol + alarme + casque + assurance RC. Une offre clé en main sans stress.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DÉMARCHE ══ -->
+<section id="demarche" class="s-wrap dark-sec">
+  <div class="s-inner">
+    <div class="demarche-header fu">
+      <span class="eyebrow">02 — Démarche mise en œuvre</span>
+      <h2 class="s-h">Étude de marché & stratégie</h2>
+      <p class="s-p" style="margin-top:.8rem">Avant de lancer Bike In Paris, j'ai mené une phase d'étude approfondie pour valider la viabilité du projet et affiner mon positionnement.</p>
+    </div>
+    <div class="demarche-flow sg">
+      <div class="flow-row">
+        <div class="flow-num">Analyse PESTEL</div>
+        <div class="flow-content">
+          <h4>Contexte macro-environnemental</h4>
+          <p>Collecte et croisement de données sectorielles sur l'essor des mobilités douces à Paris et l'évolution du tourisme vert. La matrice PESTEL m'a permis d'identifier les <strong style="color:#fff">opportunités</strong> (développement des pistes cyclables, tourisme vert en croissance) et les <strong style="color:#fff">menaces</strong> (risques de vol, réglementations strictes).</p>
+          <div class="flow-tags">
+            <span class="flow-tag">Mobilités douces</span>
+            <span class="flow-tag">Tourisme vert</span>
+            <span class="flow-tag">Pistes cyclables</span>
+            <span class="flow-tag">Réglementation</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">Analyse concurrentielle</div>
+        <div class="flow-content">
+          <h4>Identification d'un segment peu exploité</h4>
+          <p>Étude de la concurrence directe (Lime, Dott, Vélib') et indirecte (scooters, trottinettes, visites guidées). Résultat : le segment du <strong style="color:#fff">vélo électrique bi-place premium avec livraison</strong> est encore très peu exploité sur Paris. C'est là que se situe mon avantage concurrentiel.</p>
+          <div class="flow-tags">
+            <span class="flow-tag">Lime · Dott · Vélib'</span>
+            <span class="flow-tag">Libre-service vs premium</span>
+            <span class="flow-tag">Segment identifié</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">SWOT</div>
+        <div class="flow-content">
+          <h4>Diagnostic stratégique</h4>
+          <div class="swot-grid">
+            <div class="swot-card forces"><h5>Forces</h5>Offre premium unique · Livraison incluse · Accessoires fournis · Prix dégressif · Service personnalisé</div>
+            <div class="swot-card faiblesses"><h5>Faiblesses</h5>Flotte limitée (2 vélos) · Notoriété naissante · Dépendance aux plateformes tierces</div>
+            <div class="swot-card opportunites"><h5>Opportunités</h5>Tourisme vert en croissance · Pistes cyclables Paris 2024 · Attrait des couples et familles</div>
+            <div class="swot-card menaces"><h5>Menaces</h5>Risques de vol · Réglementations · Météo · Saisonnalité forte</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">Segmentation & Personas</div>
+        <div class="flow-content">
+          <h4>3 personas construits</h4>
+          <p>Segmentation selon des critères <strong style="color:#fff">géographiques, démographiques, comportementaux et psychographiques</strong>. Cœur de cible : touristes et couples au pouvoir d'achat moyen à élevé, recherchant confort et expérience de visite pratique et éco-responsable. 3 personas construits pour aligner le positionnement premium sur leurs attentes précises.</p>
+          <div class="flow-tags">
+            <span class="flow-tag">Géographique</span>
+            <span class="flow-tag">Démographique</span>
+            <span class="flow-tag">Comportemental</span>
+            <span class="flow-tag">Psychographique</span>
+            <span class="flow-tag">3 Personas</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">ADS</div>
+        <div class="flow-content">
+          <h4>Axes de Développement Stratégiques</h4>
+          <p>De l'étude PESTEL, j'ai déduit 3 axes stratégiques : <strong style="color:#fff">digitalisation</strong> (site web, réseaux sociaux), <strong style="color:#fff">service premium</strong> (livraison, accessoires, expérience) et <strong style="color:#fff">partenariats locaux</strong> (hôtels, conciergeries, Airbnb).</p>
+          <div class="flow-tags">
+            <span class="flow-tag">Digitalisation</span>
+            <span class="flow-tag">Service premium</span>
+            <span class="flow-tag">Partenariats locaux</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MIX MARKETING 4P ══ -->
+<section id="quatrep" class="s-wrap">
+  <div class="s-inner">
+    <div class="quatrep-header fu">
+      <span class="eyebrow">03 — Mix marketing</span>
+      <h2 class="s-h">Les 4P de Bike In Paris</h2>
+      <p class="s-p" style="margin-top:.8rem">Traduction de la stratégie en actions concrètes à travers le Marketing Mix.</p>
+    </div>
+    <div class="p4-grid sg">
+      <div class="p4-card">
+        <div class="p4-letter">P</div>
+        <div class="p4-name">Produit</div>
+        <ul>
+          <li>Vélo électrique bi-place ultra-confortable</li>
+          <li>Livraison et récupération sur RDV à Paris</li>
+          <li>Antivol + alarme + casque inclus</li>
+          <li>Assurance RC comprise</li>
+          <li>Location de 1 à 7 jours</li>
+        </ul>
+      </div>
+      <div class="p4-card">
+        <div class="p4-letter">P</div>
+        <div class="p4-name">Prix</div>
+        <ul>
+          <li>60 à 90 € par jour</li>
+          <li>Tarif dégressif sur la durée</li>
+          <li>Positionnement premium assumé</li>
+          <li>Valeur justifiée par le service inclus</li>
+          <li>Accessible aux moyens-hauts revenus</li>
+        </ul>
+      </div>
+      <div class="p4-card">
+        <div class="p4-letter">P</div>
+        <div class="p4-name">Distribution</div>
+        <ul>
+          <li>Le Bon Coin (phase test)</li>
+          <li>Gens de Confiance</li>
+          <li>Donkey Republic</li>
+          <li>ListNride</li>
+          <li>→ Site web propre</li>
+        </ul>
+      </div>
+      <div class="p4-card">
+        <div class="p4-letter">P</div>
+        <div class="p4-name">Communication</div>
+        <ul>
+          <li>Phase actuelle : ciblée & éthique</li>
+          <li>Bouche-à-oreille & avis clients</li>
+          <li>→ Instagram & TikTok</li>
+          <li>→ Google Ads</li>
+          <li>Partenariats hôtels / conciergeries</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LE VÉLO ══ -->
+<section id="vehicle" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">04 — Le produit</span>
+      <h2 class="s-h">Le vélo électrique bi-place</h2>
+      <p class="s-p" style="margin-top:.8rem">Puissant, confortable et pensé pour deux — idéal pour les couples et touristes qui souhaitent explorer Paris ensemble.</p>
+    </div>
+    <div class="vehicle-grid">
+      <div class="vehicle-photo fu"><img src="assets/bike_main.png" alt="Vélo bi-place électrique Bike In Paris"></div>
+      <div class="specs fu" style="transition-delay:.12s">
+        <div class="spec"><div class="spec-icon">⚡</div><div><div class="spec-name">Moteur électrique puissant</div><div class="spec-val">Assistance optimale — toutes les côtes de Paris accessibles</div></div></div>
+        <div class="spec"><div class="spec-icon">🔋</div><div><div class="spec-name">Batterie longue autonomie</div><div class="spec-val">Journée entière garantie en mode assistance</div></div></div>
+        <div class="spec"><div class="spec-icon">👫</div><div><div class="spec-name">Bi-place ultra-confortable</div><div class="spec-val">Conçu pour deux — selle arrière ergonomique et stabilité maximale</div></div></div>
+        <div class="spec"><div class="spec-icon">🔒</div><div><div class="spec-name">Antivol + Alarme inclus</div><div class="spec-val">Sécurité premium pour profiter sereinement</div></div></div>
+        <div class="spec"><div class="spec-icon">⛑️</div><div><div class="spec-name">Casque fourni</div><div class="spec-val">Casque homologué inclus dans chaque location</div></div></div>
+        <div class="spec"><div class="spec-icon">🚚</div><div><div class="spec-name">Livraison sur rendez-vous</div><div class="spec-val">Livré et récupéré directement à votre adresse parisienne</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DISTRIBUTION & COM ══ -->
+<section id="distribution" class="s-wrap dark-sec">
+  <div class="s-inner">
+    <div class="distrib-header fu">
+      <span class="eyebrow">05 — Distribution & communication</span>
+      <h2 class="s-h">Canaux actuels et à venir</h2>
+      <p class="s-p" style="margin-top:.8rem">Un lancement stratégique en deux temps : validation logistique d'abord, puis déploiement digital.</p>
+    </div>
+    <div class="distrib-layout">
+      <div class="fu">
+        <div class="phase-block">
+          <div class="phase-title">Phase actuelle — Lancement test</div>
+          <div class="platform-list sg">
+            <div class="platform-item">
+              <div class="platform-icon">🛒</div>
+              <div class="platform-text"><h4>Le Bon Coin</h4><p>Premières annonces · ciblage local</p></div>
+              <span class="platform-status status-active">Actif</span>
+            </div>
+            <div class="platform-item">
+              <div class="platform-icon">🤝</div>
+              <div class="platform-text"><h4>Gens de Confiance</h4><p>Communauté de confiance · recommandations</p></div>
+              <span class="platform-status status-active">Actif</span>
+            </div>
+            <div class="platform-item">
+              <div class="platform-icon">🚴</div>
+              <div class="platform-text"><h4>Donkey Republic</h4><p>Plateforme de location vélo</p></div>
+              <span class="platform-status status-active">Actif</span>
+            </div>
+            <div class="platform-item">
+              <div class="platform-icon">🔗</div>
+              <div class="platform-text"><h4>ListNride</h4><p>Plateforme spécialisée location vélo</p></div>
+              <span class="platform-status status-active">Actif</span>
+            </div>
+          </div>
+        </div>
+        <div class="phase-block">
+          <div class="phase-title">Phase 2 — Déploiement digital</div>
+          <div class="platform-list sg">
+            <div class="platform-item">
+              <div class="platform-icon">📸</div>
+              <div class="platform-text"><h4>Instagram & TikTok</h4><p>Contenus visuels · campagnes ciblées</p></div>
+              <span class="platform-status status-soon">À venir</span>
+            </div>
+            <div class="platform-item">
+              <div class="platform-icon">🔍</div>
+              <div class="platform-text"><h4>Google Ads</h4><p>SEA · ciblage touristes à Paris</p></div>
+              <span class="platform-status status-soon">À venir</span>
+            </div>
+            <div class="platform-item">
+              <div class="platform-icon">🌐</div>
+              <div class="platform-text"><h4>Site web propre</h4><p>Réservation directe · Stripe · SEO</p></div>
+              <span class="platform-status status-soon">À venir</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fu" style="transition-delay:.15s">
+        <div class="roadmap-card">
+          <h4>Pourquoi ce lancement en deux temps ?</h4>
+          <p>Avec une flotte de seulement 2 vélos, activer les grands canaux digitaux serait prématuré. Je me concentre d'abord sur la <strong style="color:#fff">validation de la logistique</strong> : rôder les processus de livraison, comprendre les attentes clients, optimiser la durée des locations.</p>
+          <p>Une fois la logistique maîtrisée et la flotte renforcée, le déploiement digital sera plus efficace car je pourrai absorber une forte demande dès le départ. Les campagnes sont prêtes — il ne manque que la <strong style="color:#fff">capacité d'accueil</strong>.</p>
+          <span class="roadmap-chip">Lancement pleine saison</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PARCOURS CLIENT ══ -->
+<section id="process" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">06 — Expérience client</span>
+      <h2 class="s-h">Comment ça marche</h2>
+      <p class="s-p" style="margin-top:.8rem">Simple, fluide et agréable de bout en bout — de la réservation à la récupération.</p>
+    </div>
+    <div class="process-steps sg">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Réservation</h3>
+        <p>Choix de la durée (1 à 7 jours) et prise de rendez-vous directement sur le site ou via les plateformes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Livraison</h3>
+        <p>Le vélo bi-place est livré directement à l'adresse parisienne du client, prêt à rouler avec tous les accessoires.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Exploration</h3>
+        <p>Montmartre, les berges de la Seine, le Bois de Boulogne... Paris se découvre autrement, ensemble, à deux.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Récupération</h3>
+        <p>À la fin de la location, le vélo est récupéré à l'adresse convenue. Aucune contrainte, aucun stress.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SITE INTERNET ══ -->
+<section id="website" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">07 — Le site internet</span>
+      <h2 class="s-h">bikeinparis.com</h2>
+    </div>
+    <div class="website-grid">
+      <div class="website-mockup fu">
+        <div class="wm-bar">
+          <div class="wm-dot" style="background:#FF5F57"></div>
+          <div class="wm-dot" style="background:#FEBC2E"></div>
+          <div class="wm-dot" style="background:#28C840"></div>
+          <div class="wm-url">bikeinparis.com</div>
+        </div>
+        <div class="wm-preview">
+          <div class="wm-icon">🚧</div>
+          <h4>Site en construction</h4>
+          <p>Site en construction</p>
+        </div>
+        <div class="menu-grid">
+          <div class="menu-card"><img src="assets/btn_comment.png" alt="Comment ça marche"><div class="menu-card-label">Comment ça marche</div></div>
+          <div class="menu-card"><img src="assets/btn_duree.png" alt="Durée de location"><div class="menu-card-label">Durée de location</div></div>
+          <div class="menu-card"><img src="assets/btn_durant.png" alt="Durant la location"><div class="menu-card-label">Durant la location</div></div>
+          <div class="menu-card"><img src="assets/btn_commande.png" alt="Commande spéciale"><div class="menu-card-label">Commande spéciale</div></div>
+        </div>
+      </div>
+      <div class="website-text fu" style="transition-delay:.12s">
+        <p>J'ai conçu et développé le site <strong>bikeinparis.com</strong> de A à Z. Interface moderne, parcours pensé pour la conversion, intégration Stripe pour les paiements sécurisés. Chaque bouton de navigation a été <strong>designé et illustré sur mesure</strong>.</p>
+        <p>Le site guide le visiteur à travers toutes les étapes : description du vélo bi-place, tarifs, processus de livraison, FAQ. Un travail de contenu aussi soigné que le design.</p>
+        <div class="construction-banner">
+          <div class="cb-icon">🔧</div>
+          <div class="cb-content">
+            <h4>Site momentanément en construction</h4>
+            <p>Le site <a href="https://bikeinparis.com" target="_blank" rel="noopener">bikeinparis.com</a> est actuellement en cours de finalisation.</p>
+          </div>
+        </div>
+        <div class="tech-chips">
+          <span class="chip">Wix</span>
+          <span class="chip">Stripe</span>
+          <span class="chip">UI/UX Design</span>
+          <span class="chip">Copywriting</span>
+          <span class="chip">Photoshop</span>
+          <span class="chip">Illustrator</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ IDENTITÉ VISUELLE ══ -->
+<section id="identity" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">08 — Identité visuelle</span>
+      <h2 class="s-h">Une marque dans les détails</h2>
+      <p class="s-p" style="margin-top:.8rem">Du QR code sur le cadre aux stickers de batterie — chaque élément renforce l'expérience de marque sur le terrain.</p>
+    </div>
+    <div class="identity-grid sg">
+      <div class="sticker-card">
+        <div class="sticker-img dark"><img src="assets/sticker_qr.png" alt="Sticker Louez-moi"></div>
+        <div class="sticker-info">
+          <h3>Sticker "LOUEZ-MOI"</h3>
+          <p>QR code sur le cadre de chaque vélo. Les passants peuvent scanner pour réserver instantanément — acquisition passive, zéro effort, visibilité permanente dans Paris.</p>
+        </div>
+      </div>
+      <div class="sticker-card">
+        <div class="sticker-img"><img src="assets/sticker_explore.png" alt="Explorez Paris"></div>
+        <div class="sticker-info">
+          <h3>Sticker "EXPLOREZ PARIS"</h3>
+          <p>Affiché sur chaque vélo — une invitation permanente à l'aventure et un outil de communication ambulant dans toute la ville. Le vélo devient son propre panneau publicitaire.</p>
+        </div>
+      </div>
+      <div class="sticker-card">
+        <div class="sticker-img" style="flex-direction:column;gap:.8rem">
+          <img src="assets/sticker_bat_left.png" alt="Batterie gauche" style="max-height:70px">
+          <img src="assets/sticker_bat_right.png" alt="Batterie droite" style="max-height:70px">
+        </div>
+        <div class="sticker-info">
+          <h3>Stickers Batterie</h3>
+          <p>Stickers personnalisés sur chaque batterie — gauche et droite. Un soin apporté aux moindres détails techniques, cohérent avec le positionnement premium de la marque.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-footer">
+  <a href="index.html" class="back-btn">← Retour au portfolio</a>
+  <a href="the-new-azur.html" class="next-btn">The New Azur →</a>
+</div>
+
+<script>
+/* CURSOR */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function tick(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='34px';ring.style.height='34px';});
+});
+
+/* NAV scroll */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
+
+/* INTERSECTION OBSERVER */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

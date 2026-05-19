@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abel Dompnier — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #F7F7F5;
+  --bg3: #F0EDE8;
+  --card: #ffffff;
+  --border: #E8E8E8;
+  --border-dark: #D0D0D0;
+  --blue: #0055FF;
+  --blue-light: #EEF3FF;
+  --blue-mid: rgba(0,85,255,0.08);
+  --orange: #FF4D00;
+  --orange-light: #FFF2EE;
+  --text: #0A0A0A;
+  --text-2: #555555;
+  --text-3: #999999;
+  --r: 16px;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); cursor: none; overflow-x: hidden; }
+
+/* CURSOR */
+#cursor { position: fixed; width: 10px; height: 10px; background: var(--blue); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .15s, height .15s; }
+#cursor-ring { position: fixed; width: 38px; height: 38px; border: 2px solid rgba(0,85,255,0.3); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
+
+/* LOADER */
+#loader { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: flex; align-items: center; justify-content: center; transition: opacity .6s, visibility .6s; }
+#loader.hidden { opacity: 0; visibility: hidden; }
+.loader-bar { width: 200px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.loader-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; animation: load-bar 0.8s ease forwards; }
+@keyframes load-bar { from{width:0} to{width:100%} }
+.loader-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .15em; margin-bottom: 1.5rem; color: var(--text); }
+.loader-name span { color: var(--blue); }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem 5%;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: padding .3s;
+}
+.nav-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .04em; color: var(--text); text-decoration: none; }
+.nav-logo span { color: var(--blue); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--text-2); text-decoration: none; font-size: .84rem; letter-spacing: .05em; transition: color .2s; }
+.nav-links a:hover { color: var(--blue); }
+.nav-cta { background: var(--blue); color: #fff; padding: .55rem 1.3rem; border-radius: 50px; font-size: .82rem; font-weight: 600; text-decoration: none; letter-spacing: .03em; transition: all .2s; }
+.nav-cta:hover { background: #003FCC; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,85,255,0.25); }
+
+/* HERO */
+#hero { min-height: 100vh; display: flex; align-items: center; padding: 10rem 5% 5rem; background: var(--bg); position: relative; overflow: hidden; }
+.hero-noise { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E"); pointer-events: none; }
+.hero-line-v { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); }
+.hero-line-v:nth-child(2) { left: 25%; }
+.hero-line-v:nth-child(3) { left: 50%; }
+.hero-line-v:nth-child(4) { left: 75%; }
+.hero-dot { position: absolute; width: 300px; height: 300px; background: var(--blue); border-radius: 50%; filter: blur(100px); opacity: .07; top: 10%; right: 15%; pointer-events: none; animation: hero-glow 6s ease-in-out infinite; }
+.hero-dot-2 { position: absolute; width: 200px; height: 200px; background: var(--orange); border-radius: 50%; filter: blur(80px); opacity: .06; bottom: 20%; left: 10%; pointer-events: none; animation: hero-glow 9s ease-in-out infinite reverse; }
+@keyframes hero-glow { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+.hero-inner { max-width: 1200px; margin: 0 auto; width: 100%; position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+.hero-tag { display: inline-flex; align-items: center; gap: .5rem; background: var(--blue-light); border: 1px solid rgba(0,85,255,0.15); border-radius: 50px; padding: .4rem 1rem; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: 1.8rem; font-weight: 500; }
+.hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+.hero-name { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem, 5.5vw, 5.2rem); font-weight: 700; line-height: 1.05; letter-spacing: -.03em; margin-bottom: 1.2rem; }
+.hero-name .sub { display: block; font-size: .38em; font-weight: 400; letter-spacing: .2em; color: var(--text-3); text-transform: uppercase; margin-bottom: .4em; font-family: 'Inter', sans-serif; }
+.hero-name .main { display: block; color: var(--text); }
+.hero-name .accent { color: var(--blue); }
+
+.hero-desc { font-size: 1.05rem; color: var(--text-2); line-height: 1.75; margin-bottom: 2.2rem; max-width: 480px; }
+.hero-desc strong { color: var(--text); font-weight: 600; }
+
+.hero-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2.5rem; }
+.pill { background: var(--bg2); border: 1px solid var(--border); border-radius: 50px; padding: .32rem .85rem; font-size: .78rem; color: var(--text-2); }
+
+.hero-ctas { display: flex; gap: 1rem; }
+.btn { display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 1.8rem; border-radius: 50px; font-size: .9rem; font-weight: 600; text-decoration: none; cursor: none; transition: all .22s; letter-spacing: .02em; }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-blue:hover { background: #003FCC; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,85,255,0.28); }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border-dark); }
+.btn-outline:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
+
+/* PHOTO SIDE */
+.hero-visual { display: flex; align-items: center; justify-content: center; }
+.photo-frame {
+  width: 360px; height: 430px;
+  position: relative;
+}
+.photo-deco-border { position: absolute; inset: -12px; border-radius: 28px; border: 1.5px solid var(--border); }
+.photo-deco-border-2 { position: absolute; inset: -24px; border-radius: 34px; border: 1px solid var(--border); opacity: .5; }
+.photo-box { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; border: 1.5px solid var(--border); background: var(--bg2); position: relative; }
+.photo-box img { width: 100%; height: 100%; object-fit: cover; }
+.photo-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8rem; background: linear-gradient(135deg, var(--bg2) 0%, var(--blue-light) 100%); }
+.photo-placeholder .initials { font-family: 'Space Grotesk', sans-serif; font-size: 7rem; font-weight: 700; color: var(--blue); opacity: .15; line-height: 1; }
+.photo-placeholder p { font-size: .78rem; color: var(--text-3); letter-spacing: .1em; text-transform: uppercase; }
+.badge-float { position: absolute; bottom: -18px; right: -18px; background: var(--text); color: #fff; border-radius: 14px; padding: .9rem 1.3rem; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.badge-float .bn { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--blue); line-height: 1; }
+.badge-float .bl { font-size: .7rem; color: rgba(255,255,255,0.6); margin-top: .2rem; }
+
+/* ABOUT */
+#about { padding: 7rem 5%; background: var(--bg2); border-top: 1px solid var(--border); }
+.s-inner { max-width: 1200px; margin: 0 auto; }
+.s-label { display: inline-flex; align-items: center; gap: .6rem; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); margin-bottom: .8rem; font-weight: 600; }
+.s-label::before { content: ''; width: 20px; height: 2px; background: var(--blue); border-radius: 2px; }
+.s-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 700; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 1rem; }
+.s-sub { color: var(--text-2); font-size: 1rem; line-height: 1.75; max-width: 560px; }
+
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; margin-top: 4rem; align-items: start; }
+.about-text p { color: var(--text-2); line-height: 1.85; margin-bottom: 1.2rem; font-size: .96rem; }
+.about-text p strong { color: var(--text); }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.stat-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 1.6rem; transition: all .25s; }
+.stat-card:hover { border-color: var(--blue); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,85,255,0.08); }
+.stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: .3rem; }
+.stat-label { font-size: .82rem; color: var(--text-2); line-height: 1.4; }
+
+/* TIMELINE */
+#timeline { padding: 7rem 5%; background: var(--bg); border-top: 1px solid var(--border); }
+.tl-wrapper { margin-top: 4rem; position: relative; }
+.tl-center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--border); transform: translateX(-50%); }
+.tl-items { display: flex; flex-direction: column; gap: 2.5rem; }
+.tl-item { display: grid; grid-template-columns: 1fr 80px 1fr; align-items: center; }
+.tl-content { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 1.5rem 1.8rem; transition: all .25s; }
+.tl-content:hover { border-color: var(--blue); box-shadow: 0 6px 20px rgba(0,85,255,0.08); transform: translateY(-3px); }
+.tl-item:nth-child(even) .tl-content { grid-column: 3; }
+.tl-item:nth-child(even) .tl-empty { grid-column: 1; grid-row: 1; }
+.tl-center { display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+.tl-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--card); border: 2px solid var(--border-dark); transition: all .3s; }
+.tl-item:hover .tl-dot { border-color: var(--blue); background: var(--blue); box-shadow: 0 0 0 5px var(--blue-light); }
+.tl-yr { font-family: 'Space Grotesk', sans-serif; font-size: .68rem; font-weight: 700; color: var(--text-3); letter-spacing: .08em; }
+.tl-tag { display: inline-block; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; border-radius: 50px; padding: .2rem .7rem; margin-bottom: .6rem; }
+.tl-tag.blue { background: var(--blue-light); color: var(--blue); }
+.tl-tag.orange { background: var(--orange-light); color: var(--orange); }
+.tl-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: .98rem; font-weight: 600; margin-bottom: .4rem; color: var(--text); }
+.tl-content p { font-size: .84rem; color: var(--text-2); line-height: 1.65; }
+.tl-card-logo { display:block; width:100%; height:80px; object-fit:contain; margin-top:1rem; border-radius:8px; }
+.tl-card-logo--dark { background:#0D0D0D; padding:.5rem; }
+
+/* IA SKILLS */
+#ia-skills { padding: 7rem 5%; background: var(--text); }
+#ia-skills .s-label { color: #60a5fa; }
+#ia-skills .s-label::before { background: #60a5fa; }
+#ia-skills .s-title { color: #fff; }
+#ia-skills .s-sub { color: rgba(255,255,255,0.55); }
+.ia-header { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; margin-bottom: 3.5rem; }
+.ia-intro { color: rgba(255,255,255,0.6); line-height: 1.8; font-size: .95rem; }
+.ia-intro strong { color: #60a5fa; }
+.ia-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.ia-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r); padding: 1.8rem; transition: all .3s; position: relative; overflow: hidden; }
+.ia-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,85,255,0.08) 0%, transparent 60%); opacity: 0; transition: opacity .3s; }
+.ia-card:hover { border-color: rgba(0,85,255,0.4); background: rgba(255,255,255,0.06); transform: translateY(-4px); }
+.ia-card:hover::before { opacity: 1; }
+.ia-icon { width: 46px; height: 46px; border-radius: 12px; background: rgba(0,85,255,0.15); border: 1px solid rgba(0,85,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1rem; }
+.ia-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: .98rem; font-weight: 600; color: #fff; margin-bottom: .3rem; }
+.ia-card .ia-sub { font-size: .72rem; color: #60a5fa; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .8rem; }
+.ia-card p { font-size: .82rem; color: rgba(255,255,255,0.55); line-height: 1.65; }
+.ia-bar { margin-top: 1rem; }
+.ia-bar-label { display: flex; justify-content: space-between; font-size: .7rem; color: rgba(255,255,255,0.35); margin-bottom: .4rem; }
+.ia-bar-track { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.ia-bar-fill { height: 100%; background: linear-gradient(90deg, #0055FF, #60a5fa); border-radius: 2px; transition: width 1.5s ease; width: 0; }
+.ia-section-label { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 700; margin-bottom: 1.5rem; }
+
+/* SKILLS */
+#skills { padding: 7rem 5%; background: var(--bg2); border-top: 1px solid var(--border); }
+.skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 3rem; }
+.skill-pill { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 1.3rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; text-align: center; transition: all .25s; }
+.skill-pill:hover { border-color: var(--blue); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,85,255,0.08); }
+.skill-pill .s-icon { font-size: 1.8rem; }
+.skill-pill .s-name { font-size: .86rem; font-weight: 600; color: var(--text); }
+.skill-pill .s-level { font-size: .72rem; color: var(--text-3); }
+.skills-cats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+.skills-cat { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 1.6rem; }
+.skills-cat h4 { font-family: 'Space Grotesk', sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; }
+.skills-cat ul { list-style: none; }
+.skills-cat li { padding: .38rem 0; font-size: .86rem; color: var(--text-2); display: flex; align-items: center; gap: .6rem; border-bottom: 1px solid var(--border); }
+.skills-cat li:last-child { border-bottom: none; }
+.skills-cat li::before { content: ''; width: 5px; height: 5px; background: var(--blue); border-radius: 50%; flex-shrink: 0; }
+
+/* PROJECTS */
+#projects { padding: 7rem 5%; background: var(--bg); border-top: 1px solid var(--border); }
+.projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3.5rem; }
+.project-card { border-radius: 20px; overflow: hidden; border: 1.5px solid var(--border); text-decoration: none; display: block; transition: all .35s; cursor: none; }
+.project-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.1); }
+.project-card.bip:hover { border-color: var(--blue); }
+.project-card.tna:hover { border-color: #4f46e5; }
+.project-top { padding: 2.5rem 2.5rem 0; position: relative; min-height: 200px; display: flex; align-items: center; justify-content: center; }
+.project-card.bip .project-top { background: linear-gradient(135deg, #EEF3FF 0%, #dbe8ff 100%); }
+.project-card.tna .project-top { background: linear-gradient(135deg, #F3F0FF 0%, #e5deff 100%); }
+.project-top-img { height: 160px; object-fit: contain; transition: transform .35s; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.12)); }
+.project-card:hover .project-top-img { transform: translateY(-8px) scale(1.04); }
+.project-bottom { padding: 2rem 2.5rem 2.5rem; background: var(--card); }
+.project-tag-label { display: inline-block; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; border-radius: 50px; padding: .22rem .7rem; margin-bottom: .8rem; }
+.bip .project-tag-label { background: var(--blue-light); color: var(--blue); }
+.tna .project-tag-label { background: #F3F0FF; color: #4f46e5; }
+.project-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; letter-spacing: -.02em; color: var(--text); margin-bottom: .5rem; }
+.project-desc { font-size: .88rem; color: var(--text-2); line-height: 1.65; margin-bottom: 1.5rem; }
+.project-cta { display: inline-flex; align-items: center; gap: .5rem; font-size: .84rem; font-weight: 600; padding: .55rem 1.3rem; border-radius: 50px; transition: all .2s; }
+.bip .project-cta { background: var(--blue); color: #fff; }
+.tna .project-cta { background: #4f46e5; color: #fff; }
+.project-card:hover .project-cta { transform: translateX(3px); }
+.project-card.ia-proj:hover { border-color: var(--blue); }
+
+/* CONTACT */
+#contact { padding: 7rem 5%; background: var(--blue); }
+#contact .s-label { color: rgba(255,255,255,0.6); }
+#contact .s-label::before { background: rgba(255,255,255,0.6); }
+#contact .s-title { color: #fff; }
+.contact-inner { max-width: 680px; margin: 0 auto; text-align: center; }
+.contact-inner > p { color: rgba(255,255,255,0.7); font-size: 1rem; line-height: 1.75; margin-bottom: 2.5rem; }
+.contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+.contact-link { display: flex; align-items: center; gap: .6rem; padding: .85rem 1.6rem; border-radius: 50px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); font-size: .88rem; color: #fff; text-decoration: none; transition: all .25s; backdrop-filter: blur(10px); }
+.contact-link:hover { background: rgba(255,255,255,0.22); transform: translateY(-2px); }
+
+/* FOOTER */
+footer { padding: 2rem 5%; background: var(--text); display: flex; align-items: center; justify-content: space-between; }
+footer p { font-size: .8rem; color: rgba(255,255,255,0.35); }
+.foot-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .9rem; color: rgba(255,255,255,0.5); }
+.foot-logo span { color: var(--blue); }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .hero-visual { display: none; }
+  .hero-pills, .hero-ctas { justify-content: center; }
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .tl-item { grid-template-columns: 1fr 50px 1fr; }
+  .ia-header, .ia-grid { grid-template-columns: 1fr; }
+  .ia-grid { grid-template-columns: 1fr 1fr; }
+  .skills-grid { grid-template-columns: repeat(2,1fr); }
+  .skills-cats, .projects-grid { grid-template-columns: 1fr; }
+  nav .nav-links { display: none; }
+}
+@media (max-width: 580px) {
+  .ia-grid, .stats-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<div id="loader">
+  <div style="text-align:center">
+    <div class="loader-name">ABEL<span>.</span></div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+</div>
+
+<nav>
+  <a href="#hero" class="nav-logo">Abel <span>D.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#timeline">Parcours</a></li>
+    <li><a href="#ia-skills">IA</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:abeldpn@gmail.com" class="nav-cta">Me contacter</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-line-v"></div>
+  <div class="hero-line-v"></div>
+  <div class="hero-line-v"></div>
+  <div class="hero-dot"></div>
+  <div class="hero-dot-2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-tag">BUT TC 2025–2028</div>
+      <h1 class="hero-name">
+        <span class="sub">Bonjour, je suis</span>
+        <span class="main">Abel <span class="accent">Dom</span>pnier</span>
+      </h1>
+      <p class="hero-desc">
+        <strong>Étudiant entrepreneur passionné par l'IA</strong><br><br>Actuellement en première année de BUT TC et créateur de deux marques, je suis de près les avancées de l'IA pour l'intégrer dans mes projets personnels. Passionné par la vente et le conseil, je maîtrise les techniques de prospection et l'entretien commercial, de la découverte des besoins jusqu'au closing.
+      </p>
+<div class="hero-ctas">
+        <a href="#projects" class="btn btn-blue">Voir mes projets →</a>
+        <a href="#timeline" class="btn btn-outline">Mon parcours</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="photo-frame">
+        <div class="photo-deco-border"></div>
+        <div class="photo-deco-border-2"></div>
+        <div class="photo-box">
+          <!-- Remplace par : <img src="assets/photo.jpg" alt="Abel Dompnier"> -->
+          <div class="photo-placeholder">
+            <div class="initials">AD</div>
+            <p>Ta photo ici</p>
+          </div>
+        </div>
+        <div class="badge-float">
+          <div class="bn">18</div>
+          <div class="bl">ans · Entrepreneur</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="s-inner">
+    <div class="reveal">
+      <div class="s-label">À propos</div>
+      <h2 class="s-title">Qui je suis</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal-left">
+        <p>Je m'appelle <strong>Abel Dompnier</strong>, j'ai 18 ans et je suis étudiant en <strong>BUT Techniques de Commercialisation</strong> à l'IUT Paris Est Créteil-Vitry. Depuis 15 ans, je crée, j'expérimente et je construis.</p>
+        <p>J'ai lancé deux projets entrepreneuriaux ambitieux : <strong>The New Azur</strong>, une marque de streetwear méditerranéenne, et <strong>Bike In Paris</strong>, un service de location de fat bikes électriques à Paris.</p>
+        <p>Ce qui me distingue aujourd'hui : ma maîtrise concrète des <strong>outils d'intelligence artificielle</strong>. Je les utilise quotidiennement pour accélérer mes projets — génération de contenu, analyse, automatisation marketing, design assisté par IA.</p>
+        <p>J'ai effectué un stage chez <strong>Orange Data Studio</strong> (IA & Data) et un stage de production audiovisuelle chez <strong>la Compagnie des Indes</strong>.</p>
+      </div>
+      <div class="stats-grid reveal-right">
+        <div class="stat-card">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Projets entrepreneuriaux lancés</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Outils IA maîtrisés</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Stages professionnels</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Langues parlées</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="s-inner">
+    <div class="reveal">
+      <div class="s-label">Parcours</div>
+      <h2 class="s-title">Mon évolution</h2>
+      <p class="s-sub">De mes premières expériences à aujourd'hui — chaque étape forge ma vision.</p>
+    </div>
+    <div class="tl-wrapper">
+      <div class="tl-center-line"></div>
+      <div class="tl-items">
+
+        <div class="tl-item reveal">
+          <div class="tl-content">
+            <span class="tl-tag blue">Formation</span>
+            <h3>Lycée général Arago — Spécialité Maths SES</h3>
+            <p>Cursus général avec spécialités mathématiques et sciences économiques et sociales.</p>
+            <img class="tl-card-logo" src="assets/evo_arago.jpg" alt="Lycée Arago">
+          </div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">2022–2025</div></div>
+          <div class="tl-empty"></div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-empty"></div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">2022</div></div>
+          <div class="tl-content">
+            <span class="tl-tag blue">Stage</span>
+            <h3>Compagnie des Indes — Production audiovisuelle</h3>
+            <p>Première immersion professionnelle dans un univers créatif. Production de contenu vidéo, découverte du travail d'équipe sur des projets visuels.</p>
+            <img class="tl-card-logo tl-card-logo--dark" src="assets/evo_companie_des_indes_.png" alt="La Compagnie des Indes">
+          </div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-content">
+            <span class="tl-tag orange">Création</span>
+            <h3>Création de la marque The New Azur</h3>
+            <p>Lancement de la marque et vente de bijoux et t-shirts en ligne. Réalisation d'un sharing, fabrication de produits et gestion de la communication.</p>
+            <img class="tl-card-logo" src="assets/tna_logo.png" alt="The New Azur">
+          </div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">Mars 2025</div></div>
+          <div class="tl-empty"></div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-empty"></div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">Sept 2025</div></div>
+          <div class="tl-content">
+            <span class="tl-tag blue">Formation</span>
+            <h3>BUT Techniques de Commercialisation</h3>
+            <p>Entrée à l'IUT Paris Est Créteil-Vitry. Commerce, marketing, gestion de projet et stratégie digitale.</p>
+            <img class="tl-card-logo" src="assets/evo_but.png" alt="IUT UPEC">
+          </div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-content">
+            <span class="tl-tag blue">Projets IA</span>
+            <h3>Commencement de mes projets IA</h3>
+            <p>Début de l'exploration des outils d'intelligence artificielle pour améliorer mes tâches quotidiennes et accélérer mes projets personnels.</p>
+            <img class="tl-card-logo" src="assets/evo_projet_ia_.png" alt="Projets IA">
+          </div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">Déc 2025</div></div>
+          <div class="tl-empty"></div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-empty"></div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">Jan 2026</div></div>
+          <div class="tl-content">
+            <span class="tl-tag blue">Stage IA</span>
+            <h3>Orange Data Studio — IA & Productivité</h3>
+            <p>Exploration de l'usage de l'IA dans une grande entreprise au service de la productivité : utilisation d'agents spécialisés, création de prompts poussés.</p>
+            <img class="tl-card-logo" src="assets/evo_orange.png" alt="Orange Data Studio">
+          </div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-content">
+            <span class="tl-tag blue">Formation</span>
+            <h3>Formation Anthropic Academy — 15h</h3>
+            <p>Formation axée sur la maîtrise de l'IA Claude et l'optimisation des flux de travail.</p>
+            <img class="tl-card-logo" src="assets/evo_claude_formation.png" alt="Anthropic Claude">
+          </div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">Mars 2026</div></div>
+          <div class="tl-empty"></div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-empty"></div>
+          <div class="tl-center"><div class="tl-dot"></div><div class="tl-yr">Avr 2026</div></div>
+          <div class="tl-content">
+            <span class="tl-tag blue">Lancement</span>
+            <h3>Bike in Paris — Location de vélos</h3>
+            <p>Lancement grâce aux compétences du BUT : étude de marché, marketing stratégique et opérationnel. Location de vélos biplace dans Paris.</p>
+            <img class="tl-card-logo tl-card-logo--dark" src="assets/bip_logo_titre.png" alt="Bike in Paris">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IA SKILLS -->
+<section id="ia-skills">
+  <div class="s-inner">
+    <div class="ia-header">
+      <div class="reveal">
+        <div class="s-label">Intelligence Artificielle</div>
+        <h2 class="s-title">Mes compétences IA aujourd'hui</h2>
+      </div>
+      <div class="ia-intro reveal-right">
+        L'IA est devenue mon <strong>outil principal d'accélération</strong>. J'utilise un écosystème poussé de LLM et d'applications au quotidien, en sélectionnant les meilleurs modèles selon mes besoins. Je conçois notamment mes propres workflows sur <strong>n8n</strong> pour automatiser mes tâches répétitives, gagner en productivité et décider plus vite.
+      </div>
+    </div>
+    <div class="ia-section-label reveal">Outils principaux</div>
+    <div class="ia-grid">
+
+      <div class="ia-card reveal">
+        <div class="ia-icon">🤖</div>
+        <h3>Claude (Anthropic)</h3>
+        <div class="ia-sub">Assistant IA avancé</div>
+        <p>Suite à ma formation sur Claude, j'utilise cette IA pour coder les interfaces de mes sites web, concevoir des tableaux de bord sur-mesure et générer mes présentations en un temps record.</p>
+      </div>
+
+      <div class="ia-card reveal">
+        <div class="ia-icon">✨</div>
+        <h3>Gemini (Google)</h3>
+        <div class="ia-sub">Design & Multimodal</div>
+        <p>J'utilise Gemini pour le design de mes marques. C'est mon outil de choix pour traiter et extraire les données de fichiers lourds, mais aussi pour générer des visuels et des vidéos créatifs afin de dynamiser mon identité de marque.</p>
+      </div>
+
+      <div class="ia-card reveal">
+        <div class="ia-icon">🎙️</div>
+        <h3>ElevenLabs</h3>
+        <div class="ia-sub">Synthèse vocale IA</div>
+        <p>J'utilise ElevenLabs pour générer des voix-off ultra-réalistes et captivantes afin de dynamiser les vidéos de communication que je crée pour mes marques.</p>
+      </div>
+
+    </div>
+
+    <div class="ia-section-label reveal" style="margin-top:2.5rem">Compétences</div>
+    <div class="ia-grid">
+
+      <div class="ia-card reveal">
+        <div class="ia-icon">⚡</div>
+        <h3>Prompt Engineering</h3>
+        <div class="ia-sub">Ingénierie des prompts</div>
+        <p>Je conçois des prompts réutilisables et rigoureusement structurés. J'applique une méthodologie précise (définition du rôle, du contexte, des contraintes et du format de sortie) et j'utilise l'IA elle-même pour rédiger, tester et valider mes consignes afin d'obtenir des résultats constants et de haute qualité.</p>
+      </div>
+
+      <div class="ia-card reveal">
+        <div class="ia-icon">⚙️</div>
+        <h3>Création de workflow</h3>
+        <div class="ia-sub">Automatisation n8n</div>
+        <p>Je maîtrise les bases du no-code grâce à l'outil d'automatisation n8n. Je développe plusieurs projets personnels concrets, en connectant différentes applications et API pour automatiser des flux de travail et éliminer les tâches chronophages de mon quotidien.</p>
+      </div>
+
+      <div class="ia-card reveal">
+        <div class="ia-icon">🧠</div>
+        <h3>Création d'agent simple</h3>
+        <div class="ia-sub">Custom GPTs & Gems</div>
+        <p>Je sais créer et configurer des agents IA simples sur ChatGPT (Custom GPTs) et Gemini (Gems) en leur attribuant une mémoire, des consignes strictes et des objectifs précis. Je sais également identifier, configurer et exploiter les agents spécialisés intégrés aux LLM pour répondre efficacement à des besoins spécifiques.</p>
+      </div>
+
+    </div>
+
+    <div class="reveal" style="text-align:center;margin-top:3rem">
+      <a href="#" class="btn" style="background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.25);display:inline-flex;">Découvrir en détail mes projets IA →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="s-inner">
+    <div class="reveal">
+      <div class="s-label">Compétences</div>
+      <h2 class="s-title">Outils & savoir-faire</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-pill reveal"><div class="s-icon">🎭</div><div class="s-name">Photoshop</div><div class="s-level">Retouche · Composition</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">✏️</div><div class="s-name">Illustrator</div><div class="s-level">Logo · Illustration</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">🎬</div><div class="s-name">Premiere Pro</div><div class="s-level">Montage vidéo · Réels</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">🌐</div><div class="s-name">Wix</div><div class="s-level">Sites web · E-commerce</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">🤖</div><div class="s-name">Claude Code</div><div class="s-level">Web · Interfaces</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">💳</div><div class="s-name">Stripe · Boxtal</div><div class="s-level">Paiement · Expédition</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">📈</div><div class="s-name">Marketing</div><div class="s-level">Digital · Réseaux sociaux</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">🤝</div><div class="s-name">Prospection & Négociation</div><div class="s-level">BtoB · BtoC · Clients</div></div>
+      <div class="skill-pill reveal"><div class="s-icon">📣</div><div class="s-name">Communication</div><div class="s-level">Contenu · Réseaux · Marque</div></div>
+    </div>
+    <div class="skills-cats reveal" style="margin-top:2rem">
+      <div class="skills-cat">
+        <h4>Langues</h4>
+        <ul>
+          <li>Français — Langue maternelle</li>
+          <li>Anglais — B1/B2</li>
+          <li>Espagnol — A2</li>
+        </ul>
+      </div>
+      <div class="skills-cat">
+        <h4>Sports & Activités</h4>
+        <ul>
+          <li>Natation — BNSSA</li>
+          <li>Voile — Niveau 3</li>
+          <li>Musculation</li>
+          <li>Cornet — Conservatoire</li>
+        </ul>
+      </div>
+      <div class="skills-cat">
+        <h4>Qualités</h4>
+        <ul>
+          <li>Esprit entrepreneurial</li>
+          <li>Créativité & vision</li>
+          <li>Autonomie & initiative</li>
+          <li>Travail en équipe</li>
+          <li>Communication</li>
+          <li>Aime vendre</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="s-inner">
+    <div class="reveal">
+      <div class="s-label">Projets</div>
+      <h2 class="s-title">Mes grandes réalisations</h2>
+      <p class="s-sub">Des projets construits de A à Z — de l'idée à la réalité.</p>
+    </div>
+    <div class="projects-grid">
+
+      <a href="bike-in-paris.html" class="project-card bip reveal-left">
+        <div class="project-top">
+          <img src="assets/bike_main.png" alt="Fat bike Bike In Paris" class="project-top-img">
+        </div>
+        <div class="project-bottom">
+          <span class="project-tag-label">Location · Paris · E-mobility</span>
+          <div class="project-name">Bike In Paris</div>
+          <p class="project-desc">Service de location de fat bikes électriques à Paris. De l'identité visuelle au processus de livraison, tout pensé et construit en solo.</p>
+          <span class="project-cta">Découvrir le projet →</span>
+        </div>
+      </a>
+
+      <a href="the-new-azur.html" class="project-card tna reveal-right">
+        <div class="project-top">
+          <img src="assets/tna_run_blue.png" alt="The New Azur mascotte" class="project-top-img">
+        </div>
+        <div class="project-bottom">
+          <span class="project-tag-label">Streetwear · Méditerranée · Mode</span>
+          <div class="project-name">The New Azur</div>
+          <p class="project-desc">Marque de streetwear inspirée de la Méditerranée. Collections, accessoires, identité visuelle et communication — une marque construite avec passion.</p>
+          <span class="project-cta">Découvrir le projet →</span>
+        </div>
+      </a>
+
+      <a href="#ia-skills" class="project-card ia-proj reveal" style="grid-column: 1 / -1; text-decoration:none; display:block;">
+        <div class="project-top" style="background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 100%); min-height: 140px; display:flex; align-items:center; justify-content:center;">
+          <div style="font-size:5rem; opacity:.18; line-height:1;">⚡</div>
+        </div>
+        <div class="project-bottom">
+          <span class="project-tag-label" style="background:var(--blue-light);color:var(--blue)">IA · Automatisation · Productivité</span>
+          <div class="project-name">Projets IA</div>
+          <p class="project-desc">Conception de workflows n8n, agents IA et outils sur-mesure pour automatiser mes tâches et accélérer mes projets au quotidien.</p>
+          <span class="project-cta" style="background:var(--blue);color:#fff">Découvrir en détail →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="s-inner">
+    <div class="contact-inner reveal">
+      <div class="s-label" style="justify-content:center">Contact</div>
+      <h2 class="s-title" style="color:#fff;margin-bottom:1rem">Me contacter</h2>
+      <p>Étudiant entrepreneur avec une vraie expérience terrain et une maîtrise des outils IA.</p>
+      <div class="contact-links">
+        <a href="mailto:abeldpn@gmail.com" class="contact-link"><span>📧</span> abeldpn@gmail.com</a>
+        <a href="tel:0766880542" class="contact-link"><span>📱</span> 07 66 88 05 42</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">Abel <span>D.</span></div>
+  <p>© 2026 Abel Dompnier — Portfolio personnel</p>
+  <p>Fait avec passion & IA</p>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';cursor.style.width='4px';cursor.style.height='4px';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='38px';ring.style.height='38px';cursor.style.width='10px';cursor.style.height='10px';});
+});
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hidden'),900));
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
+const barObs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.querySelectorAll('.ia-bar-fill').forEach(b=>{b.style.width=b.dataset.width+'%';});});},{threshold:0.3});
+document.querySelectorAll('.ia-card').forEach(c=>barObs.observe(c));
+window.addEventListener('scroll',()=>{document.querySelector('nav').style.padding=window.scrollY>40?'.75rem 5%':'1.1rem 5%';});
+</script>
+</body>
+</html>

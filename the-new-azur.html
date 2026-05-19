@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The New Azur — Projet Abel Dompnier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#fff;
+  --dark:#0C0C0C;
+  --sand:#F4EFE6;
+  --border:#EBEBEB;
+  --indigo:#4f46e5;
+  --indigo-dim:rgba(79,70,229,0.12);
+  --azure:#0ea5e9;
+  --text:#0A0A0A;
+  --t2:#666;
+  --t3:#aaa;
+  --r:12px;
+  --expo:cubic-bezier(0.16,1,0.3,1);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);cursor:none;overflow-x:hidden;}
+
+/* ── CURSOR ── */
+#cursor{position:fixed;width:9px;height:9px;background:#fff;mix-blend-mode:difference;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cursor-ring{position:fixed;width:34px;height:34px;border:1.5px solid rgba(79,70,229,.45);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .22s,height .22s,opacity .22s;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(255,255,255,0);transition:background .4s,border-color .4s,backdrop-filter .4s;}
+nav.scrolled{background:rgba(255,255,255,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-back{display:flex;align-items:center;gap:.55rem;color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;cursor:none;}
+.nav-back:hover{color:var(--indigo);}
+.nav-back svg{width:15px;height:15px;stroke:currentColor;fill:none;transition:transform .2s;}
+.nav-back:hover svg{transform:translateX(-3px);}
+.nav-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;}
+
+/* ── ANIMATION SYSTEM ── */
+
+/* Image reveal — curtain lifts from bottom */
+.clip-up{clip-path:inset(0 0 100% 0);transition:clip-path 1.15s var(--expo);}
+.clip-up.in{clip-path:inset(0 0 0% 0);}
+
+/* Text line — slide up from clip */
+.lr{display:block;overflow:hidden;}
+.lr span{display:block;transform:translateY(108%);transition:transform 1s var(--expo);}
+.lr.in span{transform:translateY(0);}
+
+/* Fade + slide up */
+.fu{opacity:0;transform:translateY(32px);transition:opacity .9s ease,transform .9s var(--expo);}
+.fu.in{opacity:1;transform:translateY(0);}
+
+/* Fade in only */
+.fi{opacity:0;transition:opacity 1.1s ease;}
+.fi.in{opacity:1;}
+
+/* Stagger children */
+.sg > *{opacity:0;transform:translateY(24px);transition:opacity .75s ease,transform .75s var(--expo);}
+.sg.in > *{opacity:1;transform:translateY(0);}
+.sg.in > *:nth-child(2){transition-delay:.08s;}
+.sg.in > *:nth-child(3){transition-delay:.16s;}
+.sg.in > *:nth-child(4){transition-delay:.24s;}
+.sg.in > *:nth-child(5){transition-delay:.32s;}
+.sg.in > *:nth-child(6){transition-delay:.40s;}
+
+/* ── LIGHTBOX ── */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9100;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;}
+.lightbox.active{opacity:1;visibility:visible;}
+.lightbox img{max-width:90vw;max-height:90vh;border-radius:10px;object-fit:contain;}
+.lb-close{position:absolute;top:1.4rem;right:1.4rem;width:42px;height:42px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50%;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.lb-close:hover{background:rgba(255,255,255,.22);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .25s;}
+.modal-overlay.active{opacity:1;visibility:visible;}
+.modal-box{background:#fff;border-radius:20px;padding:2.5rem 3rem;text-align:center;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,.18);transform:scale(.94);transition:transform .25s;}
+.modal-overlay.active .modal-box{transform:scale(1);}
+.modal-icon{font-size:2.5rem;margin-bottom:1rem;}
+.modal-box h3{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:.5rem;}
+.modal-box p{color:var(--t2);font-size:.88rem;line-height:1.7;margin-bottom:1.5rem;}
+.modal-close{background:var(--indigo);color:#fff;border:none;padding:.7rem 1.8rem;border-radius:50px;font-size:.86rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.modal-close:hover{background:#3730a3;}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:grid;grid-template-columns:52% 48%;overflow:hidden;}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:9rem 6% 6rem 5%;background:var(--bg);}
+.hero-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--indigo);margin-bottom:2.4rem;display:flex;align-items:center;gap:.7rem;}
+.hero-eyebrow::before{content:'';width:22px;height:2px;background:var(--indigo);border-radius:2px;}
+h1.tna-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(4.5rem,8.5vw,7rem);font-weight:700;line-height:.96;letter-spacing:-.05em;margin-bottom:2.2rem;}
+h1.tna-title .the{display:block;font-size:.28em;font-weight:300;letter-spacing:.32em;color:var(--t3);font-family:'Inter',sans-serif;text-transform:uppercase;margin-bottom:.7em;}
+h1.tna-title .new{color:var(--indigo);}
+h1.tna-title .azur{color:var(--azure);}
+.hero-desc{color:var(--t2);font-size:.96rem;line-height:1.88;max-width:400px;margin-bottom:2.4rem;}
+.hero-desc strong{color:var(--text);}
+.hero-actions{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;}
+.btn-hero{display:inline-flex;align-items:center;gap:.5rem;background:var(--dark);color:#fff;padding:.9rem 2rem;border-radius:50px;font-size:.86rem;font-weight:600;text-decoration:none;transition:all .25s;cursor:none;letter-spacing:.01em;}
+.btn-hero:hover{background:var(--indigo);transform:translateY(-2px);box-shadow:0 14px 36px rgba(79,70,229,.28);}
+.mascot-inline{height:56px;filter:drop-shadow(0 4px 12px rgba(79,70,229,.2));}
+.hero-links{display:flex;gap:.65rem;flex-wrap:wrap;}
+.hero-link{display:inline-flex;align-items:center;gap:.45rem;padding:.48rem 1.1rem;border-radius:50px;font-size:.79rem;font-weight:500;text-decoration:none;transition:all .22s;border:1.5px solid #D4D4D4;color:var(--t2);cursor:none;}
+.hero-link:hover{border-color:var(--indigo);color:var(--indigo);}
+.hero-link svg{width:13px;height:13px;flex-shrink:0;}
+.hero-right{position:relative;overflow:hidden;}
+.hero-right img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;}
+.hero-right::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,var(--bg) 0%,transparent 18%);}
+
+/* ── SECTION BASE ── */
+.s-wrap{padding:8rem 5%;}
+.s-inner{max-width:1200px;margin:0 auto;}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--indigo);margin-bottom:.8rem;display:block;}
+.dark-sec .eyebrow{color:rgba(255,255,255,.4);}
+.s-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:1rem;}
+.dark-sec .s-h{color:#fff;}
+.s-p{color:var(--t2);font-size:.94rem;line-height:1.82;max-width:520px;}
+.dark-sec .s-p{color:rgba(255,255,255,.75);}
+.warning-badge{display:inline-flex;align-items:center;gap:.4rem;background:#FEF9C3;border:1.5px solid #EAB308;border-radius:6px;padding:.2rem .65rem;font-size:.72rem;font-weight:600;color:#92400E;margin-left:.8rem;vertical-align:middle;}
+
+/* ── ORIGIN (DARK) ── */
+#origin{background:var(--dark);}
+.origin-top{margin-bottom:4rem;}
+.origin-tl{display:flex;flex-direction:column;border-top:1px solid rgba(255,255,255,.07);}
+.ot-row{display:grid;grid-template-columns:160px 1fr;gap:2.5rem;padding:2.2rem 0;border-bottom:1px solid rgba(255,255,255,.07);transition:background .25s;}
+.ot-row:hover{background:rgba(255,255,255,.025);margin:0 -2rem;padding-left:2rem;padding-right:2rem;}
+.ot-yr{font-family:'Space Grotesk',sans-serif;font-size:.75rem;font-weight:700;color:var(--indigo);letter-spacing:.06em;padding-top:.2rem;}
+.ot-content h4{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;color:#fff;margin-bottom:.4rem;}
+.ot-content p{font-size:.86rem;color:rgba(255,255,255,.48);line-height:1.7;}
+.ot-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem;}
+.ot-tag{display:inline-flex;align-items:center;padding:.22rem .72rem;border-radius:50px;font-size:.68rem;font-weight:600;letter-spacing:.05em;background:rgba(79,70,229,.18);color:rgba(200,198,255,.85);border:1px solid rgba(79,70,229,.3);text-decoration:none;transition:all .2s;cursor:none;}
+a.ot-tag:hover{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+/* hero brand bar */
+.hero-brand-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem;padding:.7rem 1.1rem;background:var(--sand);border:1.5px solid var(--border);border-radius:14px;width:fit-content;}
+.hero-brand-row .h-logo{height:30px;object-fit:contain;}
+.hero-brand-row .h-mascot{height:44px;object-fit:contain;margin-left:.5rem;}
+.hero-sep{width:1px;height:28px;background:var(--border);}
+/* archived badge */
+.hero-eyebrow.archived{color:var(--t2);}
+.hero-eyebrow.archived::before{background:var(--t2);}
+
+/* ── IDENTITY ── */
+#identity{background:var(--bg);}
+.id-header{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:3.5rem;}
+.logos-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:3rem;}
+.logo-card{border:1.5px solid var(--border);border-radius:20px;padding:2.8rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem;transition:border-color .25s,box-shadow .25s;}
+.logo-card:hover{border-color:var(--indigo);box-shadow:0 6px 28px rgba(79,70,229,.08);}
+.logo-card img{max-height:78px;max-width:100%;object-fit:contain;}
+.logo-tag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);}
+.evo-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;}
+.evo-card{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s;}
+.evo-card:hover{border-color:var(--indigo);transform:translateY(-4px);box-shadow:0 10px 28px rgba(79,70,229,.1);}
+.evo-img{height:150px;display:flex;align-items:center;justify-content:center;padding:1.4rem;background:#f9f9f9;}
+.evo-img img{max-height:110px;max-width:100%;object-fit:contain;}
+.evo-label{padding:.6rem 1rem;border-top:1px solid var(--border);font-size:.68rem;font-weight:600;color:var(--t3);letter-spacing:.07em;}
+.evo-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--text);}
+
+/* ── BIJOUX (SAND) ── */
+#bijoux{background:var(--sand);}
+.bijoux-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:4rem;align-items:start;margin-top:3.5rem;}
+.bijoux-imgs{display:flex;flex-direction:column;gap:.9rem;}
+.bij-hero{width:100%;border-radius:18px;overflow:hidden;aspect-ratio:4/3;object-fit:cover;display:block;}
+.bij-duo{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.bij-duo img{width:100%;border-radius:var(--r);aspect-ratio:1;object-fit:cover;display:block;}
+.bij-bracelets{width:100%;border-radius:var(--r);display:block;object-fit:cover;}
+.bij-content h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.7rem;}
+.bij-content h3.mt{margin-top:1.8rem;}
+.bij-content p{color:var(--t2);line-height:1.84;font-size:.9rem;margin-bottom:.9rem;}
+.bij-content strong{color:var(--text);}
+.bij-hr{border:none;border-top:1px solid rgba(0,0,0,.1);margin:1.4rem 0;}
+.prod-row{display:flex;gap:.85rem;align-items:center;padding:.8rem 1rem;background:rgba(255,255,255,.65);border:1.5px solid rgba(0,0,0,.06);border-radius:10px;margin-bottom:.45rem;transition:all .2s;}
+.prod-row:hover{background:#fff;border-color:var(--indigo);}
+.prod-dot{width:7px;height:7px;border-radius:50%;background:var(--indigo);flex-shrink:0;}
+.prod-info h4{font-size:.85rem;font-weight:600;margin-bottom:.1rem;}
+.prod-info p{font-size:.77rem;color:var(--t2);}
+.bij-tags{margin-top:1.2rem;display:flex;flex-wrap:wrap;gap:.5rem;}
+.bij-tag{background:#fff;border:1px solid rgba(79,70,229,.18);border-radius:50px;padding:.28rem .85rem;font-size:.72rem;font-weight:500;color:var(--indigo);}
+
+/* ── COLLIER (DARK) ── */
+#collier{background:var(--dark);}
+.collier-top{margin-bottom:3rem;}
+.cpg-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .65s var(--expo);}
+/* new unified 2-col collier layout */
+.collier-new-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;min-height:560px;}
+.collier-left-col{display:flex;flex-direction:column;gap:1rem;}
+.cll-main{border-radius:18px;overflow:hidden;height:320px;}
+.cll-main:hover .cpg-img{transform:scale(1.04);}
+.cll-sub{border-radius:14px;overflow:hidden;height:185px;}
+.cll-sub:hover .cpg-img{transform:scale(1.04);}
+.collier-right-col{display:flex;flex-direction:column;gap:1.2rem;height:100%;}
+.collier-bottom-row{display:flex;gap:1rem;align-items:stretch;flex:1;}
+.cll-sub2{border-radius:14px;overflow:hidden;flex:1;}
+.cll-sub2 .cpg-img{width:100%;height:100%;object-fit:cover;}
+.cll-sub2:hover .cpg-img{transform:scale(1.04);}
+.collier-bottom-row .collier-produit-wrap{flex:1.4;}
+.collier-produit-wrap{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:18px;padding:2rem;}
+.collier-produit{width:100%;max-width:240px;border-radius:var(--r);display:block;cursor:zoom-in;transition:transform .3s var(--expo);}
+.collier-produit:hover{transform:scale(1.04);}
+.prod-zoom-hint{font-size:.68rem;color:rgba(255,255,255,.4);text-align:center;margin-top:.8rem;letter-spacing:.06em;}
+.collier-aside p{color:rgba(255,255,255,.82);line-height:1.85;font-size:.9rem;margin-bottom:1rem;}
+.collier-aside strong{color:#fff;}
+.cf-list{display:flex;flex-direction:column;gap:.65rem;margin-top:1.5rem;}
+.cf{display:flex;gap:.85rem;align-items:flex-start;padding:.85rem 1rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;transition:all .22s;}
+.cf:hover{background:rgba(255,255,255,.07);border-color:rgba(79,70,229,.4);}
+.cf-icon{width:32px;height:32px;background:rgba(79,70,229,.22);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.cf-text h4{font-size:.84rem;font-weight:600;color:#fff;margin-bottom:.1rem;}
+.cf-text p{font-size:.77rem;color:rgba(255,255,255,.45);line-height:1.5;}
+
+/* ── T-SHIRT ── */
+#tshirt-section{background:var(--bg);}
+.ts-photos{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;height:500px;margin:3rem 0;}
+.ts-photo{border-radius:18px;overflow:hidden;border:1.5px solid var(--border);}
+.ts-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .65s var(--expo);}
+.ts-photo:hover img{transform:scale(1.03);}
+.ts-bottom{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.ts-text h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.7rem;}
+.ts-text p{color:var(--t2);line-height:1.82;font-size:.9rem;margin-bottom:.8rem;}
+.ts-text strong{color:var(--indigo);}
+.mockups-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.mockup-card{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem .9rem;text-align:center;transition:border-color .25s,transform .25s;}
+.mockup-card:hover{border-color:var(--indigo);transform:translateY(-3px);}
+.mockup-label{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--indigo);margin-bottom:.7rem;}
+.mockup-card svg{width:100%;max-width:160px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.06));}
+.fab-wrap{margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border);}
+.fab-label{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:1.4rem;}
+.fab-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;}
+.fab-step{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .25s,transform .25s;}
+.fab-step:hover{border-color:var(--indigo);transform:translateY(-3px);}
+.fab-step-num{background:var(--dark);color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.7rem;padding:.48rem 1rem;letter-spacing:.12em;}
+.fab-step-body{padding:.95rem;}
+.fab-step-body h4{font-size:.83rem;font-weight:600;margin-bottom:.28rem;}
+.fab-step-body p{font-size:.76rem;color:var(--t2);line-height:1.55;}
+
+/* ── PACKAGING (SAND) ── */
+#packaging-section{background:var(--sand);}
+.pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:3rem;}
+.pack-card{background:var(--bg);border-radius:18px;overflow:hidden;border:1.5px solid rgba(0,0,0,.06);transition:transform .28s var(--expo),box-shadow .28s;}
+.pack-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(0,0,0,.1);}
+.pack-img{height:260px;overflow:hidden;background:var(--sand);display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.pack-img img{max-width:100%;max-height:100%;object-fit:contain;display:block;transition:transform .45s var(--expo);}
+.pack-card:hover .pack-img img{transform:scale(1.04);}
+.pack-body{padding:1.3rem;}
+.pack-body h3{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:.38rem;}
+.pack-body p{font-size:.79rem;color:var(--t2);line-height:1.65;}
+.pack-chip{display:inline-block;margin-top:.7rem;padding:.22rem .75rem;border-radius:50px;font-size:.67rem;font-weight:600;background:var(--indigo-dim);color:var(--indigo);}
+
+/* ── SHOOTING (DARK) ── */
+#shooting{background:var(--dark);}
+.shooting-layout{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start;margin-top:3.5rem;}
+.shooting-gallery{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:280px 200px;gap:.9rem;}
+.sh-photo{border-radius:14px;overflow:hidden;}
+.sh-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .65s var(--expo);}
+.sh-photo:hover img{transform:scale(1.05);}
+.sh-photo.tall{grid-row:span 2;}
+.sh-text p{color:rgba(255,255,255,.55);line-height:1.85;font-size:.9rem;margin-bottom:.9rem;}
+.sh-text strong{color:#fff;}
+.sh-facts{display:flex;flex-direction:column;gap:.6rem;margin:1.5rem 0;}
+.sf{display:flex;gap:.75rem;align-items:flex-start;padding:.82rem 1rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.06);border-radius:10px;}
+.sf-dot{width:6px;height:6px;border-radius:50%;background:var(--indigo);flex-shrink:0;margin-top:.45rem;}
+.sf-text{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;}
+.sf-text strong{color:#fff;}
+.insta-wrap{margin-top:3.5rem;display:flex;justify-content:center;}
+.insta-wrap iframe{width:380px;max-width:100%;min-height:500px;border:0;border-radius:14px;overflow:hidden;}
+
+/* ── CERF-VOLANT ── */
+#cerf-volant{background:var(--bg);border-top:1px solid var(--border);padding:5.5rem 5%;}
+.unfinished-banner{display:inline-flex;align-items:center;gap:.5rem;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:8px;padding:.32rem .85rem;font-size:.74rem;font-weight:600;color:#B91C1C;margin-bottom:1rem;}
+.cerf-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:4rem;align-items:center;margin-top:2rem;opacity:.78;}
+.cerf-visual{background:var(--sand);border:1.5px solid var(--border);border-radius:18px;padding:3rem;display:flex;align-items:center;justify-content:center;min-height:260px;}
+.cerf-visual img{max-width:100%;max-height:220px;object-fit:contain;}
+.cerf-text h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.65rem;}
+.cerf-text p{color:var(--t2);line-height:1.82;font-size:.88rem;margin-bottom:.8rem;}
+.cerf-text strong{color:var(--indigo);}
+.design-pts{display:flex;flex-direction:column;gap:.65rem;margin-top:1.2rem;}
+.dp{display:flex;gap:.85rem;align-items:flex-start;padding:.85rem 1rem;background:var(--sand);border:1.5px solid var(--border);border-radius:10px;}
+.dp-icon{width:32px;height:32px;background:var(--indigo-dim);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0;}
+.dp-text h4{font-size:.82rem;font-weight:600;margin-bottom:.1rem;}
+.dp-text p{font-size:.76rem;color:var(--t2);line-height:1.5;}
+
+/* ── DNA (INDIGO) ── */
+#dna{background:var(--indigo);padding:8rem 5%;}
+.dna-head{margin-bottom:3.5rem;}
+.dna-head .eyebrow{color:rgba(255,255,255,.45);}
+.dna-head .s-h{color:#fff;}
+.dna-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.1);}
+.dna-card{background:var(--indigo);padding:2.6rem 2rem;transition:background .25s;}
+.dna-card:hover{background:rgba(0,0,0,.15);}
+.dna-emoji{font-size:1.7rem;display:block;margin-bottom:1rem;}
+.dna-card h3{font-family:'Space Grotesk',sans-serif;font-size:.96rem;font-weight:600;color:#fff;margin-bottom:.45rem;}
+.dna-card p{font-size:.81rem;color:rgba(255,255,255,.58);line-height:1.65;}
+
+/* ── FOOTER ── */
+.page-footer{padding:2.8rem 5%;background:var(--dark);display:flex;align-items:center;justify-content:space-between;}
+.back-btn{display:inline-flex;align-items:center;gap:.55rem;color:rgba(255,255,255,.45);text-decoration:none;font-size:.82rem;font-weight:500;border:1.5px solid rgba(255,255,255,.12);padding:.6rem 1.35rem;border-radius:50px;transition:all .22s;cursor:none;}
+.back-btn:hover{border-color:rgba(255,255,255,.4);color:#fff;}
+.next-btn{display:inline-flex;align-items:center;gap:.55rem;color:#fff;text-decoration:none;font-size:.82rem;font-weight:600;background:rgba(255,255,255,.09);padding:.6rem 1.35rem;border-radius:50px;transition:all .22s;border:1.5px solid rgba(255,255,255,.12);cursor:none;}
+.next-btn:hover{background:var(--indigo);border-color:var(--indigo);transform:translateX(3px);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  #hero{grid-template-columns:1fr;}
+  .hero-right{height:60vw;position:relative;}
+  .origin-tl .ot-row{grid-template-columns:100px 1fr;gap:1.5rem;}
+  .id-header{grid-template-columns:1fr;}
+  .bijoux-layout,.ts-bottom,.shooting-layout,.cerf-grid{grid-template-columns:1fr;}
+  .collier-new-layout{grid-template-columns:1fr;}
+  .cll-main{height:300px;}
+  .cll-sub{height:180px;}
+  .collier-produit-wrap{max-width:100%;}
+  .ts-photos{height:auto;grid-template-columns:1fr;}
+  .ts-photo{height:280px;}
+  .pack-grid{grid-template-columns:1fr 1fr;}
+  .dna-cards{grid-template-columns:1fr 1fr;}
+  .evo-row{grid-template-columns:1fr 1fr;}
+  .logos-row{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  .hero-right{display:none;}
+  h1.tna-title{font-size:clamp(3.5rem,14vw,5rem);}
+  .pack-grid,.fab-steps,.mockups-grid,.evo-row,.dna-cards,.logos-row{grid-template-columns:1fr;}
+  .shooting-gallery{grid-template-columns:1fr;grid-template-rows:auto;}
+  .sh-photo.tall{grid-row:auto;}
+  .bij-duo{grid-template-columns:1fr 1fr;}
+  .cerf-grid,.ts-bottom{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="document.getElementById('lightbox').classList.remove('active')">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="siteModal">
+  <div class="modal-box">
+    <div class="modal-icon">🚧</div>
+    <h3>Site momentanément indisponible</h3>
+    <p>Le site thenewazur.com est en cours de refonte. Retrouvez-nous sur Instagram en attendant !</p>
+    <button class="modal-close" onclick="document.getElementById('siteModal').classList.remove('active')">Fermer</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Retour au portfolio
+  </a>
+  <div class="nav-title">The New Azur</div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow archived fu">Projet archivé · Reprend peut-être en 2027</div>
+    <h1 class="tna-title">
+      <span class="the lr"><span>The</span></span>
+      <span class="new lr"><span>New</span></span>
+      <span class="azur lr"><span>Azur</span></span>
+    </h1>
+    <p class="hero-desc fu" style="transition-delay:.15s">
+      Marque de bijoux et de t-shirts née en hommage à la Côte d'Azur. À travers nos bijoux, colliers de perles et t-shirts, nous avons voulu refléter la <strong>chaleur du soleil et le bleu éclatant de l'azur</strong>.
+    </p>
+    <div class="hero-brand-row fu" style="transition-delay:.22s">
+      <img src="assets/tna_classique.png" alt="Logo The New Azur" class="h-logo">
+      <div class="hero-sep"></div>
+      <img src="assets/tna_logo.png" alt="Logo TNA ovale" class="h-logo">
+      <div class="hero-sep"></div>
+      <img src="assets/tna_run_blue.png" alt="Mascotte TNA" class="h-mascot">
+    </div>
+    <div class="hero-actions fu" style="transition-delay:.30s">
+      <a href="#origin" class="btn-hero">Découvrir l'histoire ↓</a>
+    </div>
+    <div class="hero-links fu" style="transition-delay:.40s">
+      <a href="https://www.instagram.com/thenewazur/" target="_blank" rel="noopener" class="hero-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+        @thenewazur
+      </a>
+      <a href="#" class="hero-link" onclick="event.preventDefault();document.getElementById('siteModal').classList.add('active')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        thenewazur.com
+      </a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="assets/tna_affiche_v.png" alt="The New Azur" class="clip-up">
+  </div>
+</section>
+
+<!-- ══ HISTOIRE ══ -->
+<section id="origin" class="s-wrap dark-sec">
+  <div class="s-inner">
+    <div class="origin-top fu">
+      <span class="eyebrow">01 — L'histoire</span>
+      <h2 class="s-h">Histoire et évolution</h2>
+      <p class="s-p" style="margin-top:.8rem">Nous sommes un groupe d'amis d'enfance, unis par une passion commune pour les bijoux et les souvenirs précieux. Nos familles ont passé de nombreuses années sur la Côte d'Azur, un endroit qui a profondément marqué notre imaginaire. C'est en hommage à cette belle région que nous avons choisi de nommer notre marque : <em>The New Azur</em>.</p>
+    </div>
+    <div class="origin-tl sg">
+
+      <div class="ot-row">
+        <div class="ot-yr">Janv. 2025</div>
+        <div class="ot-content">
+          <h4>Imagination de l'idée</h4>
+          <p>Naissance du concept autour de la Côte d'Azur et de ses souvenirs. Définition de l'histoire, du storytelling et des valeurs fondatrices — une marque qui raconte un lieu, une amitié, une émotion partagée.</p>
+        </div>
+      </div>
+
+      <div class="ot-row">
+        <div class="ot-yr">Mars 2025</div>
+        <div class="ot-content">
+          <h4>Identité visuelle</h4>
+          <p>Création du logo principal et du logo secondaire, design de la mascotte "bonhomme soleil" en plusieurs versions, développement de l'identité graphique complète de la marque.</p>
+          <div class="ot-tags">
+            <a href="#identity" class="ot-tag">Logo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ot-row">
+        <div class="ot-yr">Mars–Avr. 2025</div>
+        <div class="ot-content">
+          <h4>Développement des collections</h4>
+          <p>Fabrication des premières pièces artisanales : bijoux et bracelets faits main, colliers de perles, t-shirts sérigraphiés. Conception des packagings avec une attention particulière aux détails pour renforcer l'expérience de marque.</p>
+          <div class="ot-tags">
+            <a href="#bijoux" class="ot-tag">Bijoux</a>
+            <a href="#collier" class="ot-tag">Collier</a>
+            <a href="#tshirt-section" class="ot-tag">T-shirt</a>
+            <a href="#packaging-section" class="ot-tag">Packaging</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ot-row">
+        <div class="ot-yr">Avr. 2025</div>
+        <div class="ot-content">
+          <h4>Shooting photo & site internet</h4>
+          <p>Organisation d'un shooting professionnel avec modèles bénévoles et photographe — collection Summer Convex. Finalisation et mise en ligne du site e-commerce après le shooting, intégrant la boutique complète.</p>
+          <div class="ot-tags">
+            <a href="#shooting" class="ot-tag">Shooting</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ot-row">
+        <div class="ot-yr">Mai 2025</div>
+        <div class="ot-content">
+          <h4>Partenariats & ventes en direct</h4>
+          <p>Partenariat avec la Maison des Ensembles pour accéder aux marchés artisanaux. Premières ventes en direct — bijoux et colliers de perles. Lancement de la communication sur les réseaux sociaux pour faire connaître la marque.</p>
+          <div class="ot-tags">
+            <a href="#bijoux" class="ot-tag">Bijoux</a>
+            <a href="#collier" class="ot-tag">Collier</a>
+            <span class="ot-tag">Communication</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ot-row">
+        <div class="ot-yr">Automne 2025</div>
+        <div class="ot-content">
+          <h4>Mise en pause du projet</h4>
+          <p>Après une première saison active et enrichissante, le projet est archivé pour laisser place à de nouveaux horizons. Une possible relance est envisagée en 2027 avec de nouvelles collections.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ IDENTITÉ ══ -->
+<section id="identity" class="s-wrap">
+  <div class="s-inner">
+    <div class="id-header">
+      <div class="fu">
+        <span class="eyebrow">02 — Identité visuelle</span>
+        <h2 class="s-h">Logo & Mascotte</h2>
+      </div>
+      <p class="s-p fu" style="transition-delay:.1s">Une identité construite progressivement, de l'esquisse initiale jusqu'à la mascotte iconique actuelle.</p>
+    </div>
+    <div class="logos-row sg">
+      <div class="logo-card">
+        <img src="assets/tna_classique.png" alt="Logo classique The New Azur">
+        <span class="logo-tag">Logo principal</span>
+      </div>
+      <div class="logo-card">
+        <img src="assets/tna_logo.png" alt="Logo ovale TNA">
+        <span class="logo-tag">Logo secondaire</span>
+      </div>
+    </div>
+    <div class="fu">
+      <p class="evo-title">Évolution de la mascotte</p>
+      <p class="s-p" style="margin-bottom:1.4rem;font-size:.88rem;">Du premier concept abstrait jusqu'au bonhomme soleil qui court — symbole de liberté méditerranéenne.</p>
+    </div>
+    <div class="evo-row sg">
+      <div class="evo-card">
+        <div class="evo-img" style="background:#4a7c59;">
+          <img src="assets/tna_logo_v1.jpeg" alt="Version 1">
+        </div>
+        <div class="evo-label">Version 1 — Concept organique</div>
+      </div>
+      <div class="evo-card">
+        <div class="evo-img">
+          <img src="assets/tna_logo_v2.png" alt="Version 2">
+        </div>
+        <div class="evo-label">Version 2 — Silhouette & texte</div>
+      </div>
+      <div class="evo-card">
+        <div class="evo-img">
+          <img src="assets/tna_logo_v3.png" alt="Version 3">
+        </div>
+        <div class="evo-label">Version 3 — Mascotte noir</div>
+      </div>
+      <div class="evo-card">
+        <div class="evo-img" style="background:#f0f4ff;">
+          <img src="assets/tna_logo_v4.png" alt="Version 4">
+        </div>
+        <div class="evo-label">Version 4 — Bleue (actuelle)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BIJOUX ══ -->
+<section id="bijoux" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">03 — Collection</span>
+      <h2 class="s-h">Nos bijoux</h2>
+    </div>
+    <div class="bijoux-layout">
+      <div class="bijoux-imgs">
+        <img src="assets/tna_bijoux_illus.jpg" alt="Bijoux The New Azur" class="bij-hero clip-up">
+        <div class="bij-duo sg">
+          <img src="assets/tna_bijoux.png" alt="Nos bagues">
+          <img src="assets/tna_bijoux_collection.png" alt="Collection bijoux">
+        </div>
+        <img src="assets/tna_bracelets.png" alt="Nos bracelets" class="bij-bracelets fu">
+      </div>
+      <div class="bij-content fu" style="transition-delay:.1s">
+        <h3>Les bagues</h3>
+        <p>Nos bagues sont des pièces <strong>libres de droit, fabriquées en France</strong>. Sélectionnées avec soin pour leur qualité et leur accessibilité — un excellent rapport qualité/prix pour compléter nos looks.</p>
+        <div class="sg">
+          <div class="prod-row"><div class="prod-dot"></div><div class="prod-info"><h4>Bague "GoldAzur"</h4><p>Plaquée or · 15,00 €</p></div></div>
+          <div class="prod-row"><div class="prod-dot"></div><div class="prod-info"><h4>Bague "Cicada"</h4><p>Argentée · 15,00 €</p></div></div>
+          <div class="prod-row"><div class="prod-dot"></div><div class="prod-info"><h4>Bague "Lavender"</h4><p>Finition bijou · 15,00 €</p></div></div>
+        </div>
+        <hr class="bij-hr">
+        <h3 class="mt">Les bracelets</h3>
+        <p>Nos bracelets ont été <strong>entièrement designés par The New Azur</strong>. Chaque modèle est une création exclusive pensée pour correspondre à l'univers de la marque.</p>
+        <div class="sg">
+          <div class="prod-row"><div class="prod-dot"></div><div class="prod-info"><h4>Bracelet "Sunset"</h4><p>Étoile noire · 20,00 €</p></div></div>
+          <div class="prod-row"><div class="prod-dot"></div><div class="prod-info"><h4>Bracelet "Sunrise"</h4><p>Étoile dorée · 20,00 €</p></div></div>
+        </div>
+        <div class="bij-tags">
+          <span class="bij-tag">Fabriqué en France</span>
+          <span class="bij-tag">Design exclusif</span>
+          <span class="bij-tag">Livraison sécurisée</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COLLIERS ══ -->
+<section id="collier" class="s-wrap dark-sec">
+  <div class="s-inner">
+    <div class="collier-top fu">
+      <span class="eyebrow">04 — Accessoires signature</span>
+      <h2 class="s-h">Colliers de perles</h2>
+      <p class="s-p" style="margin-top:.8rem">Notre pièce iconique — un collier de perles personnalisé aux couleurs de The New Azur.</p>
+    </div>
+    <div class="collier-new-layout">
+      <!-- colonne gauche : 2 photos + 3 blocs feature en bas -->
+      <div class="collier-left-col">
+        <div class="cll-main clip-up"><img src="assets/tna_collier_s1.png" alt="Collier TNA porté" class="cpg-img"></div>
+        <div class="cll-sub clip-up" style="transition-delay:.12s"><img src="assets/tna_collier_s2.png" alt="Collier et médaillon TNA" class="cpg-img"></div>
+        <div class="cf-list sg">
+          <div class="cf"><div class="cf-icon">🌊</div><div class="cf-text"><h4>Perles nacrées sélectionnées</h4><p>Chaque perle est choisie pour son éclat et sa régularité.</p></div></div>
+          <div class="cf"><div class="cf-icon">🎨</div><div class="cf-text"><h4>Coloris signature TNA</h4><p>Blanc nacré et bleu azur — les deux couleurs emblématiques.</p></div></div>
+          <div class="cf"><div class="cf-icon">📦</div><div class="cf-text"><h4>Packaging premium</h4><p>Boîte The New Azur avec sachet en lin personnalisé.</p></div></div>
+        </div>
+      </div>
+      <!-- colonne droite : texte en haut, 2 photos en bas -->
+      <div class="collier-right-col">
+        <div class="collier-aside fu">
+          <p>Le collier de perles est devenu <strong>l'accessoire signature de The New Azur</strong>. Inspiré des côtes méditerranéennes, chaque collier est assemblé avec des perles nacrées sélectionnées pour leur éclat et leur texture douce.</p>
+          <p>Disponible en plusieurs coloris — blanc nacré, bleu azur — chaque pièce est unique et incarne l'esprit de la marque : <strong>naturel, lumineux, méditerranéen</strong>.</p>
+          <p>Ces colliers sont expédiés dans nos boîtes personnalisées The New Azur, pensées pour offrir une véritable expérience à l'ouverture.</p>
+        </div>
+        <div class="collier-bottom-row fu" style="transition-delay:.15s">
+          <div class="cll-sub2"><img src="assets/tna_collier_s3.png" alt="Collier de perles TNA" class="cpg-img"></div>
+          <div class="collier-produit-wrap">
+            <img src="assets/tna_collier_produit.png" alt="Collier de perles The New Azur" class="collier-produit" id="collierProduit">
+            <p class="prod-zoom-hint">Cliquer pour agrandir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ T-SHIRT ══ -->
+<section id="tshirt-section" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">05 — Collection textile</span>
+      <h2 class="s-h">Notre t-shirt</h2>
+      <p class="s-p" style="margin-top:.8rem">Création d'un t-shirt réalisé en sérigraphie, à partir de notre premier visuel — le bonhomme soleil en mouvement.</p>
+    </div>
+    <div class="ts-photos sg">
+      <div class="ts-photo"><img src="assets/tna_tshirt_a1.png" alt="T-shirt The New Azur — vue 1"></div>
+      <div class="ts-photo"><img src="assets/tna_tshirt_a2.png" alt="T-shirt The New Azur — vue 2"></div>
+    </div>
+    <div class="ts-bottom">
+      <div class="ts-text fu">
+        <h3>Un premier t-shirt, un vrai choix artistique</h3>
+        <p>Ce t-shirt représente le <strong>premier visuel imprimé de TNA</strong>. On y retrouve une silhouette libre courant le long de la côte, avec en tête un soleil en spirale — symbole de chaleur et de référence directe au Sud.</p>
+        <p>Ce projet a marqué une vraie découverte : la <strong>force des couleurs une fois imprimées</strong>, et les possibilités qu'offre la sérigraphie pour créer une pièce unique.</p>
+      </div>
+      <div class="mockups-grid sg">
+        <div class="mockup-card">
+          <div class="mockup-label">Face avant</div>
+          <svg viewBox="0 0 240 270" xmlns="http://www.w3.org/2000/svg">
+            <path d="M83,13 C91,34 149,34 157,13 L196,2 L239,56 L207,71 L207,258 L33,258 L33,71 L1,56 L44,2 Z" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M83,13 C91,34 149,34 157,13" fill="none" stroke="#c8c8c8" stroke-width="1.5"/>
+            <image href="assets/tna_tshirt_avant.png" x="68" y="88" width="104" height="58" preserveAspectRatio="xMidYMid meet"/>
+          </svg>
+        </div>
+        <div class="mockup-card">
+          <div class="mockup-label">Face arrière</div>
+          <svg viewBox="0 0 240 270" xmlns="http://www.w3.org/2000/svg">
+            <path d="M83,13 C91,34 149,34 157,13 L196,2 L239,56 L207,71 L207,258 L33,258 L33,71 L1,56 L44,2 Z" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M83,13 C91,34 149,34 157,13" fill="none" stroke="#c8c8c8" stroke-width="1.5"/>
+            <image href="assets/tna_run_blue.png" x="78" y="72" width="84" height="112" preserveAspectRatio="xMidYMid meet"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="fab-wrap fu">
+      <p class="fab-label">Processus de fabrication — Sérigraphie</p>
+      <div class="fab-steps sg">
+        <div class="fab-step">
+          <div class="fab-step-num">ÉTAPE 1</div>
+          <img src="assets/tna_fab_1.jpg" alt="T-shirts vierges" style="width:100%;display:block;object-fit:cover;height:170px;">
+          <div class="fab-step-body"><h4>Préparation des t-shirts</h4><p>Les t-shirts vierges sont sélectionnés, dépliés et préparés avant impression. Chaque pièce est inspectée pour garantir un rendu uniforme.</p></div>
+        </div>
+        <div class="fab-step">
+          <div class="fab-step-num">ÉTAPE 2</div>
+          <img src="assets/tna_fab_2.jpg" alt="Impression sérigraphique" style="width:100%;display:block;object-fit:cover;height:170px;">
+          <div class="fab-step-body"><h4>Impression sérigraphique</h4><p>L'encre bleue est poussée manuellement à travers l'écran gravé avec le design TNA. La machine maintient le t-shirt pour une impression précise.</p></div>
+        </div>
+        <div class="fab-step">
+          <div class="fab-step-num">ÉTAPE 3</div>
+          <img src="assets/tna_fab_3.jpg" alt="T-shirts imprimés" style="width:100%;display:block;object-fit:cover;height:170px;">
+          <div class="fab-step-body"><h4>Résultat & contrôle qualité</h4><p>Les t-shirts terminés étalés — le bonhomme soleil bleu imprimé sur chaque pièce. Contrôle visuel individuel avant conditionnement.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PACKAGING ══ -->
+<section id="packaging-section" class="s-wrap">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">06 — Expérience client</span>
+      <h2 class="s-h">Packaging</h2>
+      <p class="s-p" style="margin-top:.8rem">Chaque commande The New Azur est pensée pour créer une expérience mémorable dès l'ouverture du colis.</p>
+    </div>
+    <div class="pack-grid sg">
+      <div class="pack-card">
+        <div class="pack-img"><img src="assets/tna_pack_lain.jpg" alt="Sachets en lin The New Azur"></div>
+        <div class="pack-body"><h3>Sachets en lin</h3><p>Nos bijoux et colliers sont glissés dans des sachets en lin naturel estampillés "THE NEW AZUR". Sobre, élégant, respectueux de l'environnement.</p><span class="pack-chip">Bijoux & accessoires</span></div>
+      </div>
+      <div class="pack-card">
+        <div class="pack-img"><img src="assets/tna_pack_boite.jpg" alt="Boîte The New Azur"></div>
+        <div class="pack-body"><h3>Boîtes colliers de perles</h3><p>Les colliers sont expédiés dans une boîte marine "THE NEW AZUR" avec velours intérieur noir — une ouverture premium pour une pièce signature.</p><span class="pack-chip">Colliers de perles</span></div>
+      </div>
+      <div class="pack-card">
+        <div class="pack-img"><img src="assets/tna_pack_craft.png" alt="Emballage kraft The New Azur"></div>
+        <div class="pack-body"><h3>Emballages kraft</h3><p>Les t-shirts sont conditionnés dans des emballages en papier kraft naturel. Un choix cohérent avec l'esprit authentique et artisanal de la marque.</p><span class="pack-chip">T-shirts</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SHOOTING ══ -->
+<section id="shooting" class="s-wrap dark-sec">
+  <div class="s-inner">
+    <div class="fu">
+      <span class="eyebrow">07 — Communication</span>
+      <h2 class="s-h">Shooting & ventes</h2>
+      <p class="s-p" style="margin-top:.8rem">De l'organisation du shooting photo à nos premières ventes en direct — une vraie campagne de marque construite avec débrouillardise et créativité.</p>
+    </div>
+    <div class="shooting-layout">
+      <div class="shooting-gallery sg">
+        <div class="sh-photo tall"><img src="assets/tna_shooting_1.png" alt="Shooting TNA"></div>
+        <div class="sh-photo"><img src="assets/tna_shooting_affiche.jpg" alt="Affiche TNA"></div>
+        <div class="sh-photo"><img src="assets/tna_shooting_2.jpg" alt="Shooting bijoux"></div>
+      </div>
+      <div class="sh-text fu" style="transition-delay:.15s">
+        <p>Pour le shooting de la collection <strong>Summer Convex</strong>, nous avons démarchés des mannequins sur la base du <strong>volontariat dans Paris</strong>. Sans budget pour les payer, nous avons organisé un <strong>buffet à leur arrivée</strong> et engagé un ami photographe — une approche créative qui a donné des résultats professionnels.</p>
+        <div class="sh-facts sg">
+          <div class="sf"><div class="sf-dot"></div><div class="sf-text"><strong>Mannequins bénévoles</strong> recrutés directement à Paris — buffet offert en échange de leur temps.</div></div>
+          <div class="sf"><div class="sf-dot"></div><div class="sf-text"><strong>Photographe ami</strong> engagé pour la journée — direction artistique assurée par TNA.</div></div>
+          <div class="sf"><div class="sf-dot"></div><div class="sf-text"><strong>2 ventes en direct</strong> sur les marchés de l'artisanat — contact direct avec les clients, retours immédiats.</div></div>
+          <div class="sf"><div class="sf-dot"></div><div class="sf-text"><strong>TikTok Ads</strong> utilisé comme levier publicitaire principal pour toucher une audience jeune et ciblée.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="insta-wrap fu">
+      <iframe src="https://www.instagram.com/reel/DCM-4IYIu18/embed/" allowfullscreen allowtransparency scrolling="no"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CERF-VOLANT ══ -->
+<section id="cerf-volant">
+  <div class="s-inner" style="max-width:1200px;margin:0 auto;">
+    <div class="fu">
+      <span class="unfinished-banner">🚫 Projet non abouti</span>
+      <h2 class="s-h" style="font-size:clamp(1.6rem,2.5vw,2.2rem);">Le t-shirt "Cerf-Volant"</h2>
+    </div>
+    <div class="cerf-grid">
+      <div class="cerf-visual fu"><img src="assets/tna_tshirt.png" alt="T-shirt cerf-volant TNA"></div>
+      <div class="cerf-text fu" style="transition-delay:.1s">
+        <h3>Un design ambitieux, resté à l'état de concept</h3>
+        <p>Le t-shirt "Cerf-Volant" était l'un des designs les plus ambitieux de TNA. Devant : le personnage TNA tenant un cerf-volant. Dos : la voile déployée en grand. Un design qui se découvre des deux côtés.</p>
+        <p>Ce projet n'a pas été lancé en production — il reste à l'état de <strong>maquette finalisée</strong>, faute de temps et de ressources au moment de sa conception.</p>
+        <div class="design-pts sg">
+          <div class="dp"><div class="dp-icon">✏️</div><div class="dp-text"><h4>Dessiné sur Illustrator</h4><p>Chaque tracé conçu manuellement, fidèle au style TNA.</p></div></div>
+          <div class="dp"><div class="dp-icon">🖨️</div><div class="dp-text"><h4>Prévu en sérigraphie</h4><p>Impression sérigraphique prévue sur coton épais — projet mis en pause.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DNA ══ -->
+<section id="dna">
+  <div class="s-inner" style="max-width:1200px;margin:0 auto;">
+    <div class="dna-head fu">
+      <span class="eyebrow">L'ADN de la marque</span>
+      <h2 class="s-h">Ce qui rend TNA unique</h2>
+    </div>
+    <div class="dna-cards sg">
+      <div class="dna-card"><span class="dna-emoji">🌊</span><h3>Inspiration Côte d'Azur</h3><p>La marque est née de nos souvenirs communs sur la Côte d'Azur — ses couleurs, sa lumière, ses étés. Ce n'est pas une référence abstraite : c'est un lieu que nous avons vécu et qui a forgé notre imaginaire.</p></div>
+      <div class="dna-card"><span class="dna-emoji">✊</span><h3>Authenticité</h3><p>Tout créé en interne : logo, designs, packaging, communication. Aucun intermédiaire.</p></div>
+      <div class="dna-card"><span class="dna-emoji">🎨</span><h3>Créativité</h3><p>Chaque pièce raconte une histoire. Du t-shirt au collier de perles, le design est pensé comme une œuvre.</p></div>
+      <div class="dna-card"><span class="dna-emoji">👥</span><h3>Vraie équipe</h3><p>The New Azur est né entre amis d'enfance. Chaque décision, chaque pièce, chaque visuel est le fruit d'un travail collectif — une vraie équipe soudée, pas une marque solitaire.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="page-footer">
+  <a href="index.html" class="back-btn">← Retour au portfolio</a>
+  <a href="bike-in-paris.html" class="next-btn">Bike In Paris →</a>
+</div>
+
+<script>
+/* CURSOR */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function tick(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='34px';ring.style.height='34px';});
+});
+
+/* NAV scroll */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
+
+/* INTERSECTION OBSERVER — handles all animation classes */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      /* stagger children get 'in' via parent's CSS .sg.in > * */
+    }
+  });
+},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>io.observe(el));
+
+/* LIGHTBOX */
+const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');
+document.getElementById('collierProduit').addEventListener('click',()=>{
+  lbImg.src='assets/tna_collier_produit.png';
+  lb.classList.add('active');
+});
+lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('active');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('active');});
+
+/* MODAL */
+document.getElementById('siteModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
+</script>
+</body>
+</html>
