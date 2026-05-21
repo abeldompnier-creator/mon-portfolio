@@ -56,6 +56,13 @@ main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align
 .video-container{width:100%;border-radius:20px;overflow:hidden;border:1.5px solid var(--border);background:#0a0a0a;box-shadow:0 20px 60px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);position:relative;}
 .video-container video{width:100%;display:block;max-height:700px;object-fit:contain;}
 
+/* BOUTON LECTURE */
+.play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;background:rgba(0,0,0,.15);transition:opacity .3s;}
+.play-overlay.hidden{opacity:0;pointer-events:none;}
+.play-btn{width:72px;height:72px;background:rgba(255,255,255,.92);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.3);transition:transform .2s,box-shadow .2s;}
+.play-btn svg{color:#0055FF;margin-left:5px;}
+.play-overlay:hover .play-btn{transform:scale(1.1);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+
 /* BOUTON RÉDUIRE EN PLEIN ÉCRAN */
 .exit-fs-btn{display:none;position:absolute;top:18px;right:18px;align-items:center;gap:.45rem;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:50px;padding:.55rem 1.1rem;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;z-index:10;transition:background .2s;}
 .exit-fs-btn:hover{background:rgba(255,255,255,.28);}
@@ -115,6 +122,11 @@ footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1
         <source src="assets/cv-abel.mp4" type="video/mp4">
         Votre navigateur ne supporte pas la lecture vidéo.
       </video>
+      <div class="play-overlay" id="play-overlay">
+        <div class="play-btn">
+          <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
       <button class="exit-fs-btn" id="exit-fs-btn">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3"/></svg>
         Réduire
@@ -157,7 +169,15 @@ footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1
 const video = document.getElementById('cv-video');
 const container = document.getElementById('video-container');
 const exitBtn = document.getElementById('exit-fs-btn');
+const playOverlay = document.getElementById('play-overlay');
 const actions = document.querySelector('.actions');
+
+function goFullscreen() {
+  const req = container.requestFullscreen || container.webkitRequestFullscreen;
+  if (req) req.call(container);
+  video.play();
+  playOverlay.classList.add('hidden');
+}
 
 function exitFullscreenAndScroll() {
   if (document.fullscreenElement) document.exitFullscreen();
@@ -170,13 +190,14 @@ function scrollToActions() {
   }, 200);
 }
 
+playOverlay.addEventListener('click', goFullscreen);
+
 video.addEventListener('click', () => {
-  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-    const req = container.requestFullscreen || container.webkitRequestFullscreen;
-    if (req) req.call(container);
-    video.play();
-  }
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) goFullscreen();
 });
+
+video.addEventListener('play', () => playOverlay.classList.add('hidden'));
+video.addEventListener('pause', () => { if (!document.fullscreenElement && !document.webkitFullscreenElement) playOverlay.classList.remove('hidden'); });
 
 exitBtn.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -184,6 +205,7 @@ exitBtn.addEventListener('click', (e) => {
 });
 
 video.addEventListener('ended', () => {
+  playOverlay.classList.remove('hidden');
   exitFullscreenAndScroll();
 });
 
