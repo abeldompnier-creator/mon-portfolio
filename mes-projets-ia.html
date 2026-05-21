@@ -85,10 +85,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
   transform-style:preserve-3d;
   will-change:transform;
   position:relative;
-  filter:blur(2px);
+  filter:brightness(0.82);
 }
 .ia-card.side{flex:0 0 260px;transform:scale(.93);}
-.ia-card:hover{filter:none !important;}
+.ia-card:hover{filter:brightness(1) !important;}
 .ia-card.card-n8n:hover{box-shadow:0 20px 50px rgba(249,115,22,.18),0 0 0 1.5px rgba(249,115,22,.3);}
 .ia-card.card-pdd:hover{box-shadow:0 20px 50px rgba(79,70,229,.15),0 0 0 1.5px rgba(79,70,229,.3);}
 .ia-card.card-gems:hover{box-shadow:0 20px 50px rgba(14,165,233,.15),0 0 0 1.5px rgba(14,165,233,.3);}
@@ -133,12 +133,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
   border-radius:var(--r);
   display:flex;align-items:center;gap:1.8rem;
   padding:1.4rem 2rem;
-  filter:blur(2px);
+  filter:brightness(0.82);
   box-shadow:0 2px 12px rgba(251,191,36,.1);
   transition:opacity .3s,filter .3s;
   position:relative;overflow:hidden;
 }
-.wip-card-h:hover{opacity:1;filter:none;}
+.wip-card-h:hover{filter:brightness(1);}
 .wip-card-h::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(251,191,36,.04),transparent);pointer-events:none;}
 .wip-icon-big{font-size:2rem;flex-shrink:0;width:52px;height:52px;background:#fffbeb;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #fde68a;}
 .wip-info{flex:1;}
