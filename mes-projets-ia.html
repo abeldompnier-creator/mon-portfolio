@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projets IA — Abel Dompnier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MTGGQ3DF');</script>
+<!-- End Google Tag Manager -->
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#ffffff;
+  --bg2:#F7F7F5;
+  --card:#ffffff;
+  --border:#E8E8E8;
+  --blue:#0055FF;
+  --blue-light:#EEF3FF;
+  --text:#0A0A0A;
+  --text-2:#555555;
+  --text-3:#999999;
+  --indigo:#4f46e5;
+  --azure:#0ea5e9;
+  --orange:#f97316;
+  --r:16px;
+  --expo:cubic-bezier(0.16,1,0.3,1);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);cursor:none;overflow-x:hidden;min-height:100vh;position:relative;}
+
+/* BACKGROUND LINES */
+.bg-lines{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-line{position:absolute;top:0;bottom:0;width:1px;background:var(--border);}
+.bg-line:nth-child(1){left:25%;}
+.bg-line:nth-child(2){left:50%;}
+.bg-line:nth-child(3){left:75%;}
+.bg-noise{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");}
+.bg-glow-1{position:fixed;width:400px;height:400px;background:var(--blue);border-radius:50%;filter:blur(120px);opacity:.05;top:5%;right:10%;pointer-events:none;z-index:0;animation:glow 7s ease-in-out infinite;}
+.bg-glow-2{position:fixed;width:280px;height:280px;background:var(--orange);border-radius:50%;filter:blur(100px);opacity:.04;bottom:15%;left:8%;pointer-events:none;z-index:0;animation:glow 10s ease-in-out infinite reverse;}
+@keyframes glow{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:var(--blue);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s;}
+#cursor-ring{position:fixed;width:38px;height:38px;border:2px solid rgba(0,85,255,.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s;}
+.nav-back{display:flex;align-items:center;gap:.55rem;color:var(--text-2);text-decoration:none;font-size:.82rem;transition:color .2s;cursor:none;}
+.nav-back:hover{color:var(--blue);}
+.nav-back svg{width:15px;height:15px;stroke:currentColor;fill:none;transition:transform .2s;}
+.nav-back:hover svg{transform:translateX(-3px);}
+.nav-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text);}
+
+/* HERO */
+.hero{padding:10rem 5% 4rem;text-align:center;position:relative;z-index:1;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:1.5rem;}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--blue);opacity:.5;}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.4rem,5vw,4rem);font-weight:700;line-height:1.1;margin-bottom:1.2rem;color:var(--text);}
+.hero h1 span{color:var(--blue);}
+.hero-sub{color:var(--text-2);font-size:1.05rem;line-height:1.7;max-width:560px;margin:0 auto;}
+
+/* CARDS STAGE */
+.stage{padding:2rem 3% 5rem;display:flex;flex-direction:column;align-items:center;gap:2.5rem;position:relative;z-index:1;}
+.cards-row{display:flex;align-items:center;justify-content:center;gap:1.8rem;width:100%;max-width:1100px;perspective:1400px;}
+
+/* SINGLE CARD */
+.ia-card{
+  flex:0 0 300px;
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  cursor:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+  transition:transform .55s var(--expo),box-shadow .55s var(--expo),opacity .4s,filter .4s;
+  transform-style:preserve-3d;
+  will-change:transform;
+  position:relative;
+}
+.ia-card.side{flex:0 0 260px;opacity:.65;filter:blur(.6px);transform:scale(.93);}
+.ia-card:hover{opacity:1 !important;filter:none !important;}
+.ia-card.card-n8n:hover{box-shadow:0 20px 50px rgba(249,115,22,.18),0 0 0 1.5px rgba(249,115,22,.3);}
+.ia-card.card-pdd:hover{box-shadow:0 20px 50px rgba(79,70,229,.15),0 0 0 1.5px rgba(79,70,229,.3);}
+.ia-card.card-gems:hover{box-shadow:0 20px 50px rgba(14,165,233,.15),0 0 0 1.5px rgba(14,165,233,.3);}
+.ia-card.center{flex:0 0 340px;opacity:1;filter:none;transform:scale(1);box-shadow:0 8px 40px rgba(0,85,255,.1);}
+
+/* CARD VISUAL (dark image area) */
+.card-visual{height:210px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border-radius:var(--r) var(--r) 0 0;}
+.card-n8n .card-visual{background:linear-gradient(135deg,#1a0e00,#2d1500);}
+.card-pdd .card-visual{background:linear-gradient(135deg,#0d0d2e,#1a1040);}
+.card-gems .card-visual{background:linear-gradient(135deg,#001520,#001f35);}
+.card-visual img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--expo);}
+.card-visual img.phone-img{object-fit:contain;padding:1rem;}
+.ia-card:hover .card-visual img{transform:scale(1.04);}
+.card-badge{position:absolute;top:.75rem;right:.75rem;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .7rem;border-radius:50px;}
+.card-n8n .card-badge{background:rgba(249,115,22,.18);color:#ea6c00;border:1px solid rgba(249,115,22,.3);}
+.card-pdd .card-badge{background:rgba(79,70,229,.15);color:#4f46e5;border:1px solid rgba(79,70,229,.25);}
+.card-gems .card-badge{background:rgba(14,165,233,.15);color:#0284c7;border:1px solid rgba(14,165,233,.25);}
+
+/* CARD BODY */
+.card-body{padding:1.4rem;background:var(--card);}
+.card-cat{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;}
+.card-n8n .card-cat{color:#ea6c00;}
+.card-pdd .card-cat{color:#4f46e5;}
+.card-gems .card-cat{color:#0284c7;}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;line-height:1.35;margin-bottom:.75rem;color:var(--text);}
+.card-text{font-size:.8rem;color:var(--text-2);line-height:1.7;margin-bottom:1rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-tags{display:flex;flex-wrap:wrap;gap:.4rem;}
+.card-tag{font-size:.7rem;padding:.25rem .65rem;border-radius:50px;background:var(--bg2);border:1px solid var(--border);color:var(--text-3);}
+.card-cta{display:flex;align-items:center;justify-content:space-between;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--border);}
+.card-cta-text{font-size:.75rem;font-weight:600;color:var(--text-2);}
+.card-cta-arrow{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:transform .2s;}
+.card-n8n .card-cta-arrow{background:rgba(249,115,22,.1);color:#ea6c00;}
+.card-pdd .card-cta-arrow{background:var(--blue-light);color:var(--blue);}
+.card-gems .card-cta-arrow{background:rgba(14,165,233,.1);color:#0284c7;}
+.ia-card:hover .card-cta-arrow{transform:scale(1.1);}
+
+/* WIP HORIZONTAL CARD */
+.wip-card-h{
+  width:100%;max-width:1100px;
+  background:var(--card);
+  border:1.5px solid #fde68a;
+  border-radius:var(--r);
+  display:flex;align-items:center;gap:1.8rem;
+  padding:1.4rem 2rem;
+  opacity:.6;
+  filter:blur(.4px);
+  box-shadow:0 2px 12px rgba(251,191,36,.1);
+  transition:opacity .3s,filter .3s;
+  position:relative;overflow:hidden;
+}
+.wip-card-h:hover{opacity:.8;filter:none;}
+.wip-card-h::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(251,191,36,.04),transparent);pointer-events:none;}
+.wip-icon-big{font-size:2rem;flex-shrink:0;width:52px;height:52px;background:#fffbeb;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #fde68a;}
+.wip-info{flex:1;}
+.wip-info-top{display:flex;align-items:center;gap:.75rem;margin-bottom:.4rem;}
+.wip-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:var(--text);}
+.wip-badge{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:.25rem .75rem;border-radius:50px;background:#fffbeb;color:#b45309;border:1px solid #fde68a;}
+.wip-desc{font-size:.82rem;color:var(--text-2);line-height:1.6;}
+.wip-tags{display:flex;gap:.4rem;margin-top:.7rem;flex-wrap:wrap;}
+.wip-tag{font-size:.7rem;padding:.22rem .6rem;border-radius:50px;background:var(--bg2);border:1px solid var(--border);color:var(--text-3);}
+.wip-status{flex-shrink:0;text-align:center;}
+.wip-status-icon{font-size:1.5rem;}
+.wip-status-label{font-size:.65rem;color:#b45309;letter-spacing:.1em;text-transform:uppercase;margin-top:.3rem;display:block;}
+
+/* BUTTONS */
+.page-cta{display:flex;align-items:center;justify-content:center;gap:1rem;padding-bottom:5rem;}
+.btn-back{display:inline-flex;align-items:center;gap:.55rem;color:var(--text-2);text-decoration:none;font-size:.84rem;font-weight:500;border:1.5px solid var(--border);padding:.75rem 1.6rem;border-radius:50px;transition:all .22s;cursor:none;}
+.btn-back:hover{border-color:var(--text-2);color:var(--text);}
+.btn-projects{display:inline-flex;align-items:center;gap:.55rem;color:#fff;text-decoration:none;font-size:.84rem;font-weight:600;background:var(--blue);padding:.75rem 1.6rem;border-radius:50px;transition:all .22s;cursor:none;}
+.btn-projects:hover{background:#003FCC;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,85,255,.25);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;pointer-events:none;transition:background .4s;}
+.modal-overlay.open{background:rgba(0,0,0,.6);pointer-events:all;}
+.modal{background:var(--card);border:1.5px solid var(--border);border-radius:24px;width:min(680px,94vw);max-height:88vh;overflow-y:auto;opacity:0;transform:scale(.9) translateY(20px);transition:opacity .45s var(--expo),transform .45s var(--expo);box-shadow:0 30px 80px rgba(0,0,0,.15);}
+.modal-overlay.open .modal{opacity:1;transform:scale(1) translateY(0);}
+.modal-visual{height:280px;position:relative;overflow:hidden;border-radius:22px 22px 0 0;display:flex;}
+.modal-visual img{width:100%;height:100%;object-fit:cover;display:block;}
+.modal-visual.two-img{display:grid;grid-template-columns:1fr 1fr;}
+.modal-visual.two-img img{border-radius:0;}
+.modal-visual.two-img img:first-child{border-radius:22px 0 0 0;}
+.modal-visual.two-img img:last-child{border-radius:0 22px 0 0;}
+.modal-visual.phone-visual{align-items:center;justify-content:center;}
+.modal-visual.phone-visual img{object-fit:contain;padding:2rem;max-width:300px;width:auto;}
+.modal-close{position:sticky;top:1rem;float:right;margin:1rem 1rem 0 0;width:34px;height:34px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:none;color:var(--text-2);font-size:1rem;z-index:10;transition:background .2s;}
+.modal-close:hover{background:var(--border);color:var(--text);}
+.modal-body{padding:2rem 2rem 2.5rem;}
+.modal-cat{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.6rem;}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:1.55rem;font-weight:700;line-height:1.2;margin-bottom:1rem;color:var(--text);}
+.modal-text{font-size:.92rem;color:var(--text-2);line-height:1.8;margin-bottom:1.5rem;}
+.modal-bullets{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.5rem;}
+.modal-bullet{display:flex;align-items:flex-start;gap:.75rem;padding:.8rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:12px;font-size:.85rem;color:var(--text);}
+
+@media(max-width:860px){
+  .cards-row{flex-direction:column;align-items:center;gap:1.2rem;}
+  .ia-card,.ia-card.side,.ia-card.center{flex:none;width:min(340px,92vw);opacity:1;filter:none;transform:none;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+  .wip-card-h{flex-direction:column;text-align:center;opacity:.8;filter:none;}
+  .wip-info-top{justify-content:center;}
+  .wip-tags{justify-content:center;}
+  .page-cta{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTGGQ3DF"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- BACKGROUND identique à la page d'accueil -->
+<div class="bg-lines">
+  <div class="bg-line"></div>
+  <div class="bg-line"></div>
+  <div class="bg-line"></div>
+</div>
+<div class="bg-noise"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 24 24" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Retour au portfolio
+  </a>
+  <div class="nav-title">Abel Dompnier</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Intelligence Artificielle</div>
+  <h1>Mes projets <span>IA</span></h1>
+  <p class="hero-sub">Des outils concrets que j'utilise au quotidien — automatisation, assistants sur-mesure et applications multi-LLM.</p>
+</section>
+
+<!-- CARDS -->
+<section class="stage">
+
+  <!-- 3 cartes verticales -->
+  <div class="cards-row">
+
+    <!-- CARTE 1 — n8n agent révision -->
+    <div class="ia-card card-n8n side" data-card="0">
+      <div class="card-visual">
+        <img src="assets/ia_phone.png" alt="Notification révision IA" class="phone-img">
+        <span class="card-badge">n8n</span>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Automatisation no-code</div>
+        <h3 class="card-title">Mon agent IA de révision quotidien</h3>
+        <p class="card-text">Un workflow n8n qui se déclenche chaque soir à 18h, analyse mes cours du jour et m'envoie une synthèse en notification.</p>
+        <div class="card-tags">
+          <span class="card-tag">⏰ 18h automatique</span>
+          <span class="card-tag">📚 Synthèse IA</span>
+          <span class="card-tag">🔔 Push notif</span>
+        </div>
+        <div class="card-cta">
+          <span class="card-cta-text">Voir le détail</span>
+          <span class="card-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTE 2 — Crée ton PDD (centre) -->
+    <div class="ia-card card-pdd center" data-card="1">
+      <div class="card-visual">
+        <img src="assets/ia_interface_pdd.png" alt="Interface Crée ton PDD">
+        <span class="card-badge">Multi-LLM</span>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Application locale</div>
+        <h3 class="card-title">Crée ton PDD — l'IA qui prépare mes négociations</h3>
+        <p class="card-text">Je prends en photo un cas de négociation, et l'app génère automatiquement mon plan de découverte et mes outils de vente.</p>
+        <div class="card-tags">
+          <span class="card-tag">📸 Entrée photo</span>
+          <span class="card-tag">🤖 Gemini + Claude + GPT</span>
+          <span class="card-tag">📋 PDD généré</span>
+        </div>
+        <div class="card-cta">
+          <span class="card-cta-text">Voir le détail</span>
+          <span class="card-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTE 3 — Gems Gemini -->
+    <div class="ia-card card-gems side" data-card="2">
+      <div class="card-visual">
+        <img src="assets/ia_assistant_marketing.png" alt="Assistant Marketing Gemini">
+        <span class="card-badge">Gemini Gems</span>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Assistants spécialisés</div>
+        <h3 class="card-title">Mes assistants IA sur-mesure</h3>
+        <p class="card-text">J'ai conçu mes propres Gems Gemini, chacun calibré pour un besoin précis : marketing, entrepreneuriat et gestion de projet.</p>
+        <div class="card-tags">
+          <span class="card-tag">🎯 Un Gem = un métier</span>
+          <span class="card-tag">📈 Assistant marketing</span>
+          <span class="card-tag">🚲 Assistant BIP</span>
+        </div>
+        <div class="card-cta">
+          <span class="card-cta-text">Voir le détail</span>
+          <span class="card-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CARTE HORIZONTALE — Saveur Traiteur (en construction) -->
+  <div class="wip-card-h">
+    <div class="wip-icon-big">🍽️</div>
+    <div class="wip-info">
+      <div class="wip-info-top">
+        <span class="wip-title">Saveur Traiteur</span>
+        <span class="wip-badge">En construction</span>
+      </div>
+      <p class="wip-desc">Solution complète pour un traiteur professionnel : création du site internet et développement d'un agent IA pour automatiser les demandes de devis et la gestion client.</p>
+      <div class="wip-tags">
+        <span class="wip-tag">🌐 Site internet</span>
+        <span class="wip-tag">🤖 Agent IA</span>
+        <span class="wip-tag">📋 Devis automatisés</span>
+        <span class="wip-tag">💼 Projet professionnel</span>
+      </div>
+    </div>
+    <div class="wip-status">
+      <div class="wip-status-icon">⏳</div>
+      <span class="wip-status-label">Bientôt</span>
+    </div>
+  </div>
+
+  <!-- BOUTONS -->
+  <div class="page-cta">
+    <a href="index.html" class="btn-back">← Retour au portfolio</a>
+    <a href="index.html#projects" class="btn-projects">Découvrir les autres projets →</a>
+  </div>
+
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="overlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const cards = [
+  {
+    color:'#ea6c00',
+    cat:'Automatisation no-code · n8n',
+    title:'Mon agent IA de révision quotidien',
+    visual:`<div class="modal-visual phone-visual" style="background:linear-gradient(135deg,#1a0e00,#2d1500)"><img src="assets/ia_phone.png" alt="Notification"></div>`,
+    text:`J'ai construit sur n8n un workflow qui se déclenche chaque jour à 18h. Il analyse automatiquement les nouveaux cours pris sur mon ordinateur, en extrait les points essentiels du jour et de la veille, puis m'envoie la synthèse en notification. Résultat : je ne décroche jamais, et je révise sans y penser. Un agent IA discret, mais qui a vraiment changé ma façon d'apprendre.`,
+    bullets:['⏰ Déclenchement automatique à 18h tous les jours','📚 Synthèse du cours du jour + rappel de la veille','🔔 Notification push directe — aucune action manuelle','🔧 Construit en no-code sur n8n']
+  },
+  {
+    color:'#4f46e5',
+    cat:'Application locale · Multi-LLM',
+    title:"Crée ton PDD — l'IA qui prépare mes négociations",
+    visual:`<div class="modal-visual two-img"><img src="assets/ia_interface_pdd.png" alt="Interface PDD"><img src="assets/ia_cheminement_n8n.png" alt="Workflow n8n"></div>`,
+    text:`"Crée ton PDD" est une application que j'utilise au quotidien. Je prends en photo un cas de négociation, et l'app génère automatiquement mon plan de découverte et mes outils d'aide à la vente. L'interface, codée avec Claude Code, envoie la photo dans n8n : Gemini analyse le cas, puis Claude et GPT se partagent le raisonnement et la rédaction. Tout repose sur des prompts que j'ai écrits étape par étape.`,
+    bullets:['📸 Entrée par simple photo du cas de négociation','🤖 3 IA orchestrées en séquence : Gemini → Claude → GPT','📋 Plan de découverte + OAV générés automatiquement','💻 Interface codée avec Claude Code + workflow n8n']
+  },
+  {
+    color:'#0284c7',
+    cat:'Assistants spécialisés · Google Gemini',
+    title:'Mes assistants IA sur-mesure (Gems Gemini)',
+    visual:`<div class="modal-visual two-img"><img src="assets/ia_assistant_marketing.png" alt="Assistant Marketing"><img src="assets/ia_assistant_bip.png" alt="Assistant Bike in Paris"></div>`,
+    text:`J'ai développé mes propres assistants IA via les Gems de Gemini, chacun taillé pour un besoin précis : un assistant marketing pour structurer mes stratégies et mobiliser toutes mes compétences sur mes projets, et un assistant dédié à mon projet Bike In Paris pour la stratégie, la vente et la communication. L'idée : ne pas utiliser une IA généraliste quand un assistant spécialisé fait dix fois mieux. C'est cette logique — le bon outil pour le bon métier — que j'applique au quotidien.`,
+    bullets:['🎯 Chaque Gem est calibré sur un contexte précis','📈 Assistant Marketing : stratégie, campagnes, contenus','🚲 Assistant Bike In Paris : vente, logistique, comm','⚡ Alimentés par des prompts système sur-mesure']
+  }
+];
+
+function openModal(idx){
+  const c=cards[idx];
+  document.getElementById('modalContent').innerHTML=`
+    ${c.visual}
+    <div class="modal-body">
+      <div class="modal-cat" style="color:${c.color}">${c.cat}</div>
+      <h2 class="modal-title">${c.title}</h2>
+      <p class="modal-text">${c.text}</p>
+      <div class="modal-bullets">${c.bullets.map(b=>`<div class="modal-bullet">${b}</div>`).join('')}</div>
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modalClose').addEventListener('click',closeModal);
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+document.querySelectorAll('.ia-card[data-card]').forEach(card=>{
+  card.addEventListener('click',()=>openModal(parseInt(card.dataset.card)));
+});
+
+document.querySelectorAll('.ia-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=e.clientX-r.left,y=e.clientY-r.top;
+    const cx=r.width/2,cy=r.height/2;
+    const rotX=((y-cy)/cy)*-8,rotY=((x-cx)/cx)*8;
+    card.style.transform=`perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform=card.classList.contains('center')?'scale(1)':'scale(.93)';
+    setTimeout(()=>{card.style.transform='';},10);
+  });
+});
+
+const cursor=document.getElementById('cursor');
+const ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.ia-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='38px';ring.style.height='38px';});
+});
+
+window.addEventListener('scroll',()=>{document.querySelector('nav').style.padding=scrollY>40?'.75rem 5%':'1.1rem 5%';});
+</script>
+</body>
+</html>

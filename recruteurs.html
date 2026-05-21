@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abel Dompnier — CV Vidéo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MTGGQ3DF');</script>
+<!-- End Google Tag Manager -->
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#ffffff;
+  --border:#E8E8E8;
+  --blue:#0055FF;
+  --blue-light:#EEF3FF;
+  --text:#0A0A0A;
+  --text-2:#555555;
+  --text-3:#999999;
+  --orange:#f97316;
+  --r:14px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;}
+
+/* BACKGROUND */
+.bg-lines{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-line{position:absolute;top:0;bottom:0;width:1px;background:var(--border);}
+.bg-line:nth-child(1){left:25%;}
+.bg-line:nth-child(2){left:50%;}
+.bg-line:nth-child(3){left:75%;}
+.bg-noise{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");}
+.bg-glow-1{position:fixed;width:400px;height:400px;background:var(--blue);border-radius:50%;filter:blur(120px);opacity:.05;top:5%;right:10%;pointer-events:none;z-index:0;animation:glow 7s ease-in-out infinite;}
+.bg-glow-2{position:fixed;width:280px;height:280px;background:var(--orange);border-radius:50%;filter:blur(100px);opacity:.04;bottom:15%;left:8%;pointer-events:none;z-index:0;animation:glow 10s ease-in-out infinite reverse;}
+@keyframes glow{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* MAIN */
+main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px 80px;}
+
+/* HEADER */
+.page-header{text-align:center;margin-bottom:2.5rem;}
+.page-header .label{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);background:var(--blue-light);border:1px solid #d0dcff;border-radius:50px;padding:.3rem .9rem;display:inline-block;margin-bottom:1rem;}
+.mister-ia{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.8rem,10vw,5.5rem);font-weight:700;letter-spacing:-.02em;line-height:1;background:linear-gradient(135deg,var(--blue),#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.4rem;}
+.page-header h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:var(--text);line-height:1.2;}
+.page-header p{color:var(--text-2);font-size:.95rem;margin-top:.5rem;}
+
+/* VIDEO */
+.video-wrapper{width:100%;max-width:400px;position:relative;}
+.video-container{width:100%;border-radius:20px;overflow:hidden;border:1.5px solid var(--border);background:#0a0a0a;box-shadow:0 20px 60px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);}
+.video-container video{width:100%;display:block;max-height:700px;object-fit:contain;}
+
+/* ACTIONS */
+.actions{display:flex;flex-wrap:wrap;gap:.85rem;justify-content:center;margin-top:2rem;width:100%;max-width:400px;}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:var(--blue);color:#fff;border:none;border-radius:var(--r);padding:.85rem 1.6rem;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s;white-space:nowrap;}
+.btn-primary:hover{background:#003ecc;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,85,255,.25);}
+.btn-secondary{display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:var(--text);border:1.5px solid var(--border);border-radius:var(--r);padding:.85rem 1.6rem;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;white-space:nowrap;}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,85,255,.1);}
+.btn-linkedin{display:inline-flex;align-items:center;gap:.5rem;background:#0A66C2;color:#fff;border:none;border-radius:var(--r);padding:.85rem 1.6rem;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s;white-space:nowrap;}
+.btn-linkedin:hover{background:#084f97;transform:translateY(-2px);box-shadow:0 8px 24px rgba(10,102,194,.3);}
+
+/* DIVIDER */
+.divider{width:100%;max-width:400px;height:1px;background:var(--border);margin:2.2rem 0;}
+
+/* IDENTITY */
+.identity{text-align:center;}
+.identity .name{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:var(--text);}
+.identity .title{font-size:.88rem;color:var(--text-2);margin-top:.2rem;}
+
+/* FOOTER */
+footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--text-3);}
+
+@media(max-width:600px){
+  .actions{flex-direction:column;align-items:stretch;}
+  .btn-primary,.btn-secondary,.btn-linkedin{justify-content:center;}
+  .video-container video{max-height:280px;}
+}
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTGGQ3DF" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="bg-lines"><div class="bg-line"></div><div class="bg-line"></div><div class="bg-line"></div></div>
+<div class="bg-noise"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+
+<main>
+  <div class="page-header">
+    <div class="label">CV Vidéo</div>
+    <div class="mister-ia">MISTER IA</div>
+    <h1>Abel Dompnier</h1>
+    <p>Créateur de contenu &amp; Intégrateur IA</p>
+  </div>
+
+  <div class="video-wrapper">
+    <div class="video-container">
+      <video controls preload="metadata" poster="">
+        <source src="assets/cv-abel.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture vidéo.
+      </video>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a href="index.html" class="btn-primary">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Découvrir mon portfolio
+    </a>
+    <a href="mes-projets-ia.html" class="btn-secondary">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Mes projets IA
+    </a>
+    <a href="mailto:abeldompnier@gmail.com" class="btn-secondary">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Me contacter
+    </a>
+    <a href="https://www.linkedin.com/in/abel-dompnier-965854379/" target="_blank" rel="noopener" class="btn-linkedin">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="identity">
+    <div class="name">Abel Dompnier</div>
+    <div class="title">abeldompnier@gmail.com</div>
+  </div>
+</main>
+
+<footer>
+  © 2025 Abel Dompnier — Page privée, accès sur invitation
+</footer>
+
+</body>
+</html>
