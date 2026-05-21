@@ -61,6 +61,8 @@ nav {
 .nav-links a:hover { color: var(--blue); }
 .nav-cta { background: var(--blue); color: #fff; padding: .55rem 1.3rem; border-radius: 50px; font-size: .82rem; font-weight: 600; text-decoration: none; letter-spacing: .03em; transition: all .2s; }
 .nav-cta:hover { background: #003FCC; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,85,255,0.25); }
+.nav-lock { display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; border:1.5px solid var(--border); color:var(--text-3); text-decoration:none; transition:all .2s; }
+.nav-lock:hover { border-color:var(--blue); color:var(--blue); background:var(--blue-light); }
 
 /* HERO */
 #hero { min-height: 100vh; display: flex; align-items: center; padding: 10rem 5% 5rem; background: var(--bg); position: relative; overflow: hidden; }
@@ -327,6 +329,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <li><a href="#projects">Projets</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <a href="acces.html" class="nav-lock" title="Accès privé">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  </a>
   <a href="mailto:abeldpn@gmail.com" class="nav-cta">Me contacter</a>
 </nav>
 

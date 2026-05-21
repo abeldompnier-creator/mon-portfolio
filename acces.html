@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accès privé — Abel Dompnier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MTGGQ3DF');</script>
+<!-- End Google Tag Manager -->
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#ffffff;--border:#E8E8E8;--blue:#0055FF;--blue-light:#EEF3FF;
+  --text:#0A0A0A;--text-2:#555555;--text-3:#999999;--orange:#f97316;--r:14px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* BACKGROUND */
+.bg-lines{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-line{position:absolute;top:0;bottom:0;width:1px;background:var(--border);}
+.bg-line:nth-child(1){left:25%;}
+.bg-line:nth-child(2){left:50%;}
+.bg-line:nth-child(3){left:75%;}
+.bg-noise{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");}
+.bg-glow-1{position:fixed;width:400px;height:400px;background:var(--blue);border-radius:50%;filter:blur(120px);opacity:.05;top:5%;right:10%;pointer-events:none;z-index:0;animation:glow 7s ease-in-out infinite;}
+.bg-glow-2{position:fixed;width:280px;height:280px;background:var(--orange);border-radius:50%;filter:blur(100px);opacity:.04;bottom:15%;left:8%;pointer-events:none;z-index:0;animation:glow 10s ease-in-out infinite reverse;}
+@keyframes glow{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* MAIN */
+main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
+
+/* LOCK CARD */
+.lock-card{background:#fff;border:1.5px solid var(--border);border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.06);}
+.lock-icon{width:60px;height:60px;background:var(--blue-light);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;}
+.lock-icon svg{color:var(--blue);}
+.lock-card h1{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.4rem;}
+.lock-card p{color:var(--text-2);font-size:.88rem;margin-bottom:1.8rem;line-height:1.5;}
+
+/* FORM */
+.input-wrap{position:relative;margin-bottom:1rem;}
+.input-wrap input{width:100%;padding:.85rem 3rem .85rem 1.1rem;border:1.5px solid var(--border);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.95rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;}
+.input-wrap input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,85,255,.1);}
+.input-wrap input.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1);}
+.toggle-pw{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;display:flex;align-items:center;}
+.toggle-pw:hover{color:var(--text);}
+.btn-enter{width:100%;padding:.9rem;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s,transform .2s,box-shadow .2s;}
+.btn-enter:hover{background:#003ecc;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,85,255,.25);}
+.error-msg{color:#ef4444;font-size:.8rem;margin-top:.5rem;display:none;}
+
+/* SUCCESS */
+.success-state{display:none;flex-direction:column;align-items:center;gap:1.2rem;}
+.success-icon{width:60px;height:60px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.success-icon svg{color:#16a34a;}
+.success-state h2{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;}
+.success-state p{color:var(--text-2);font-size:.88rem;}
+.btn-cv{display:inline-flex;align-items:center;gap:.6rem;background:var(--blue);color:#fff;border-radius:50px;padding:.9rem 2rem;font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;text-decoration:none;transition:background .2s,transform .2s,box-shadow .2s;margin-top:.4rem;}
+.btn-cv:hover{background:#003ecc;transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,85,255,.3);}
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTGGQ3DF" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="bg-lines"><div class="bg-line"></div><div class="bg-line"></div><div class="bg-line"></div></div>
+<div class="bg-noise"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+
+<main>
+  <div class="lock-card">
+
+    <!-- État : formulaire -->
+    <div id="form-state">
+      <div class="lock-icon">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <h1>Accès privé</h1>
+      <p>Cette page est réservée aux recruteurs.<br>Entrez le mot de passe pour continuer.</p>
+
+      <div class="input-wrap">
+        <input type="password" id="pw-input" placeholder="Mot de passe" autocomplete="off">
+        <button class="toggle-pw" id="toggle-pw" type="button" aria-label="Afficher le mot de passe">
+          <svg id="eye-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <p class="error-msg" id="error-msg">Mot de passe incorrect.</p>
+      <button class="btn-enter" id="btn-enter">Accéder →</button>
+    </div>
+
+    <!-- État : succès -->
+    <div class="success-state" id="success-state">
+      <div class="success-icon">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2>Accès accordé</h2>
+      <p>Bienvenue. Vous pouvez maintenant consulter le CV vidéo d'Abel.</p>
+      <a href="recruteurs.html" class="btn-cv">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Voir le CV vidéo
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const input = document.getElementById('pw-input');
+const btn = document.getElementById('btn-enter');
+const errorMsg = document.getElementById('error-msg');
+const formState = document.getElementById('form-state');
+const successState = document.getElementById('success-state');
+const togglePw = document.getElementById('toggle-pw');
+
+if (sessionStorage.getItem('acces_ok') === '1') {
+  formState.style.display = 'none';
+  successState.style.display = 'flex';
+}
+
+function check() {
+  if (input.value === atob('VE9CRUwzMzFAQEBA')) {
+    sessionStorage.setItem('acces_ok', '1');
+    formState.style.display = 'none';
+    successState.style.display = 'flex';
+  } else {
+    input.classList.add('error');
+    errorMsg.style.display = 'block';
+    input.value = '';
+    setTimeout(() => { input.classList.remove('error'); errorMsg.style.display = 'none'; }, 2500);
+  }
+}
+
+btn.addEventListener('click', check);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+
+togglePw.addEventListener('click', () => {
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  togglePw.querySelector('svg').style.opacity = isText ? '1' : '0.4';
+});
+</script>
+
+</body>
+</html>
