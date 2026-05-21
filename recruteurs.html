@@ -53,8 +53,16 @@ main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align
 
 /* VIDEO */
 .video-wrapper{width:100%;max-width:400px;position:relative;}
-.video-container{width:100%;border-radius:20px;overflow:hidden;border:1.5px solid var(--border);background:#0a0a0a;box-shadow:0 20px 60px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);}
+.video-container{width:100%;border-radius:20px;overflow:hidden;border:1.5px solid var(--border);background:#0a0a0a;box-shadow:0 20px 60px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);position:relative;}
 .video-container video{width:100%;display:block;max-height:700px;object-fit:contain;}
+
+/* BOUTON RÉDUIRE EN PLEIN ÉCRAN */
+.exit-fs-btn{display:none;position:absolute;top:18px;right:18px;align-items:center;gap:.45rem;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:50px;padding:.55rem 1.1rem;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;z-index:10;transition:background .2s;}
+.exit-fs-btn:hover{background:rgba(255,255,255,.28);}
+.video-container:fullscreen .exit-fs-btn,
+.video-container:-webkit-full-screen .exit-fs-btn{display:flex;}
+.video-container:fullscreen video,
+.video-container:-webkit-full-screen video{max-height:100vh;height:100%;}
 
 /* ACTIONS */
 .actions{display:flex;flex-wrap:wrap;gap:.85rem;justify-content:center;margin-top:2rem;width:100%;max-width:400px;}
@@ -102,11 +110,15 @@ footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1
   </div>
 
   <div class="video-wrapper">
-    <div class="video-container">
+    <div class="video-container" id="video-container">
       <video id="cv-video" controls preload="auto">
         <source src="assets/cv-abel.mp4" type="video/mp4">
         Votre navigateur ne supporte pas la lecture vidéo.
       </video>
+      <button class="exit-fs-btn" id="exit-fs-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3"/></svg>
+        Réduire
+      </button>
     </div>
   </div>
 
@@ -143,18 +155,43 @@ footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1
 
 <script>
 const video = document.getElementById('cv-video');
+const container = document.getElementById('video-container');
+const exitBtn = document.getElementById('exit-fs-btn');
+const actions = document.querySelector('.actions');
+
+function exitFullscreenAndScroll() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+}
+
+function scrollToActions() {
+  setTimeout(() => {
+    actions.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 200);
+}
 
 video.addEventListener('click', () => {
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-    const req = video.requestFullscreen || video.webkitRequestFullscreen;
-    if (req) req.call(video);
+    const req = container.requestFullscreen || container.webkitRequestFullscreen;
+    if (req) req.call(container);
     video.play();
   }
 });
 
+exitBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  exitFullscreenAndScroll();
+});
+
 video.addEventListener('ended', () => {
-  if (document.fullscreenElement) document.exitFullscreen();
-  else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+  exitFullscreenAndScroll();
+});
+
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) scrollToActions();
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  if (!document.webkitFullscreenElement) scrollToActions();
 });
 </script>
 
