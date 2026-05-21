@@ -103,7 +103,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1
 
   <div class="video-wrapper">
     <div class="video-container">
-      <video controls preload="metadata" poster="">
+      <video id="cv-video" controls preload="auto">
         <source src="assets/cv-abel.mp4" type="video/mp4">
         Votre navigateur ne supporte pas la lecture vidéo.
       </video>
@@ -140,6 +140,23 @@ footer{position:relative;z-index:1;text-align:center;padding:1.2rem;border-top:1
 <footer>
   © 2025 Abel Dompnier — Page privée, accès sur invitation
 </footer>
+
+<script>
+const video = document.getElementById('cv-video');
+
+video.addEventListener('click', () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const req = video.requestFullscreen || video.webkitRequestFullscreen;
+    if (req) req.call(video);
+    video.play();
+  }
+});
+
+video.addEventListener('ended', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+});
+</script>
 
 </body>
 </html>
