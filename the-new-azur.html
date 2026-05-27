@@ -720,7 +720,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="sh-photo"><img src="assets/tna_shooting_2.jpg" alt="Shooting bijoux"></div>
       </div>
       <div class="sh-text fu" style="transition-delay:.15s">
-        <p>Pour le shooting de la collection <strong>Summer Convex</strong>, nous avons démarchés des mannequins sur la base du <strong>volontariat dans Paris</strong>. Sans budget pour les payer, nous avons organisé un <strong>buffet à leur arrivée</strong> et engagé un ami photographe — une approche créative qui a donné des résultats professionnels.</p>
+        <p>Pour le shooting de la collection <strong>Summer Convex</strong>, nous avons démarché des mannequins sur la base du <strong>volontariat dans Paris</strong>. Sans budget pour les payer, nous avons organisé un <strong>buffet à leur arrivée</strong> et engagé un ami photographe — une approche créative qui a donné des résultats professionnels.</p>
         <div class="sh-facts sg">
           <div class="sf"><div class="sf-dot"></div><div class="sf-text"><strong>Mannequins bénévoles</strong> recrutés directement à Paris — buffet offert en échange de leur temps.</div></div>
           <div class="sf"><div class="sf-dot"></div><div class="sf-text"><strong>Photographe ami</strong> engagé pour la journée — direction artistique assurée par TNA.</div></div>
@@ -799,11 +799,20 @@ const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
       e.target.classList.add('in');
-      /* stagger children get 'in' via parent's CSS .sg.in > * */
     }
   });
-},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+},{threshold:0.05,rootMargin:'0px 0px 0px 0px'});
 document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>io.observe(el));
+
+// Fallback : révèle immédiatement les éléments déjà dans la fenêtre
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.top<window.innerHeight&&r.bottom>0)el.classList.add('in');
+    });
+  },100);
+});
 
 /* LIGHTBOX */
 const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');

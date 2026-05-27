@@ -711,8 +711,17 @@ window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scr
 /* INTERSECTION OBSERVER */
 const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
-},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+},{threshold:0.05,rootMargin:'0px 0px 0px 0px'});
 document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>io.observe(el));
+
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.top<window.innerHeight&&r.bottom>0)el.classList.add('in');
+    });
+  },100);
+});
 </script>
 </body>
 </html>
