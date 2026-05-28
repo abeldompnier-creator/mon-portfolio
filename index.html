@@ -279,6 +279,23 @@ footer p { font-size: .8rem; color: rgba(255,255,255,0.35); }
 .reveal-right { opacity: 0; transform: translateX(24px); transition: opacity .7s ease, transform .7s ease; }
 .reveal-right.visible { opacity: 1; transform: translateX(0); }
 
+/* BURGER MENU */
+.nav-burger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:4px;cursor:pointer;z-index:101;}
+.nav-burger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
+.nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-burger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+.nav-mobile{display:none;position:fixed;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);z-index:99;padding:1.5rem 5% 2rem;flex-direction:column;gap:0;box-shadow:0 12px 32px rgba(0,0,0,.08);}
+.nav-mobile.open{display:flex;}
+.nav-mobile-section{display:flex;flex-direction:column;}
+.nav-mobile-section a{display:flex;align-items:center;gap:.75rem;padding:.9rem 0;font-size:1rem;font-weight:600;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s;}
+.nav-mobile-section a:last-child{border-bottom:none;}
+.nav-mobile-section a:hover{color:var(--blue);}
+.nav-mobile-divider{margin:1rem 0 .5rem;font-size:.68rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-3);}
+.nav-mobile-section.projects a{font-size:.88rem;font-weight:500;color:var(--text-2);}
+.nav-mobile-section.projects a::before{content:'→';color:var(--blue);font-size:.8rem;}
+
 /* RESPONSIVE */
 @media(hover:none) and (pointer:coarse){
   #cursor,#cursor-ring{display:none !important;}
@@ -296,6 +313,7 @@ footer p { font-size: .8rem; color: rgba(255,255,255,0.35); }
   .skills-grid { grid-template-columns: repeat(2,1fr); }
   .skills-cats, .projects-grid { grid-template-columns: 1fr; }
   nav .nav-links { display: none; }
+  .nav-burger { display: flex; }
   #hero { padding: 7rem 5% 4rem; }
   #about,#timeline,#ia-skills,#skills,#projects,#contact { padding: 4.5rem 5%; }
 }
@@ -303,12 +321,17 @@ footer p { font-size: .8rem; color: rgba(255,255,255,0.35); }
   .ia-grid { grid-template-columns: 1fr; }
   #hero { padding: 5rem 5% 3rem; }
   #about,#timeline,#ia-skills,#skills,#projects,#contact { padding: 3.5rem 5%; }
-  /* Timeline : empilement vertical */
+  /* Timeline : dates à gauche, cartes à droite */
   .tl-center-line { display: none; }
-  .tl-items { gap: 1.2rem; }
-  .tl-item { grid-template-columns: 1fr !important; }
-  .tl-center,.tl-empty { display: none; }
-  .tl-item:nth-child(even) .tl-content { grid-column: 1; }
+  .tl-items { gap: 1rem; }
+  .tl-item { display: grid !important; grid-template-columns: 52px 1fr !important; gap: 0 .7rem; align-items: start; }
+  .tl-center { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; align-items: center; padding-top: .55rem; gap: .3rem; }
+  .tl-content { grid-column: 2; grid-row: 1; }
+  .tl-item:nth-child(even) .tl-content { grid-column: 2; grid-row: 1; }
+  .tl-item:nth-child(even) .tl-center { grid-column: 1; grid-row: 1; }
+  .tl-empty { display: none !important; }
+  .tl-dot { width: 10px; height: 10px; }
+  .tl-yr { font-size: .58rem; text-align: center; line-height: 1.35; }
   /* Nav */
   .nav-cta { padding: .42rem .9rem; font-size: .76rem; }
   .nav-lock { width: 30px; height: 30px; }
@@ -357,8 +380,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <a href="acces.html" class="nav-lock" title="Accès privé">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
   </a>
+  <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
   <a href="mailto:abeldompnier@gmail.com" class="nav-cta">Me contacter</a>
 </nav>
+
+<div class="nav-mobile" id="navMobile">
+  <div class="nav-mobile-section">
+    <a href="#about" class="nav-mobile-link">À propos</a>
+    <a href="#timeline" class="nav-mobile-link">Parcours</a>
+    <a href="#ia-skills" class="nav-mobile-link">IA</a>
+    <a href="#projects" class="nav-mobile-link">Projets</a>
+    <a href="#contact" class="nav-mobile-link">Contact</a>
+  </div>
+  <div class="nav-mobile-divider">Mes projets</div>
+  <div class="nav-mobile-section projects">
+    <a href="mes-projets-ia.html">Projets IA</a>
+    <a href="bike-in-paris.html">Bike In Paris</a>
+    <a href="the-new-azur.html">The New Azur</a>
+  </div>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -770,6 +810,11 @@ document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.
 const barObs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.querySelectorAll('.ia-bar-fill').forEach(b=>{b.style.width=b.dataset.width+'%';});});},{threshold:0.3});
 document.querySelectorAll('.ia-card').forEach(c=>barObs.observe(c));
 window.addEventListener('scroll',()=>{document.querySelector('nav').style.padding=window.scrollY>40?'.75rem 5%':'1.1rem 5%';});
+
+const burger=document.getElementById('navBurger'),navMobile=document.getElementById('navMobile');
+function closeMenu(){burger.classList.remove('open');navMobile.classList.remove('open');document.body.style.overflow='';}
+burger.addEventListener('click',()=>{burger.classList.toggle('open');navMobile.classList.toggle('open');document.body.style.overflow=navMobile.classList.contains('open')?'hidden':'';});
+navMobile.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
 
 // HOLO + TILT
 const photoFrame = document.querySelector('.photo-frame');
