@@ -280,20 +280,45 @@ footer p { font-size: .8rem; color: rgba(255,255,255,0.35); }
 .reveal-right.visible { opacity: 1; transform: translateX(0); }
 
 /* RESPONSIVE */
+@media(hover:none) and (pointer:coarse){
+  #cursor,#cursor-ring{display:none !important;}
+  body{cursor:auto !important;}
+  .reveal,.reveal-left,.reveal-right{opacity:1 !important;transform:none !important;}
+}
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; text-align: center; }
   .hero-visual { display: none; }
   .hero-pills, .hero-ctas { justify-content: center; }
   .about-grid { grid-template-columns: 1fr; gap: 3rem; }
   .tl-item { grid-template-columns: 1fr 50px 1fr; }
-  .ia-header, .ia-grid { grid-template-columns: 1fr; }
+  .ia-header { grid-template-columns: 1fr; }
   .ia-grid { grid-template-columns: 1fr 1fr; }
   .skills-grid { grid-template-columns: repeat(2,1fr); }
   .skills-cats, .projects-grid { grid-template-columns: 1fr; }
   nav .nav-links { display: none; }
+  #hero { padding: 7rem 5% 4rem; }
+  #about,#timeline,#ia-skills,#skills,#projects,#contact { padding: 4.5rem 5%; }
 }
 @media (max-width: 580px) {
-  .ia-grid, .stats-grid { grid-template-columns: 1fr; }
+  .ia-grid { grid-template-columns: 1fr; }
+  #hero { padding: 5rem 5% 3rem; }
+  #about,#timeline,#ia-skills,#skills,#projects,#contact { padding: 3.5rem 5%; }
+  /* Timeline : empilement vertical */
+  .tl-center-line { display: none; }
+  .tl-items { gap: 1.2rem; }
+  .tl-item { grid-template-columns: 1fr !important; }
+  .tl-center,.tl-empty { display: none; }
+  .tl-item:nth-child(even) .tl-content { grid-column: 1; }
+  /* Nav */
+  .nav-cta { padding: .42rem .9rem; font-size: .76rem; }
+  .nav-lock { width: 30px; height: 30px; }
+  /* Projets */
+  .nav-cards-grid { grid-template-columns: 1fr; }
+  .ia-preview { gap: .8rem; padding: 1rem; }
+  .ia-preview-card.side { display: none; }
+  .project-bottom { padding: 1.4rem 1.6rem 1.8rem; }
+  /* Footer */
+  footer { flex-direction: column; gap: .7rem; text-align: center; padding: 1.8rem 5%; }
 }
 </style>
 <!-- Google Tag Manager -->
