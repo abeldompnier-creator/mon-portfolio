@@ -795,24 +795,28 @@ const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
 
 /* INTERSECTION OBSERVER — handles all animation classes */
+function revealEl(el){el.classList.add('in');}
 const io=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('in');
-    }
-  });
-},{threshold:0.05,rootMargin:'0px 0px 0px 0px'});
+  entries.forEach(e=>{if(e.isIntersecting){revealEl(e.target);io.unobserve(e.target);}});
+},{threshold:0,rootMargin:'0px 0px 200px 0px'});
 document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>io.observe(el));
 
-// Fallback : révèle immédiatement les éléments déjà dans la fenêtre
+// Fallback load : révèle les éléments proches de la fenêtre
 window.addEventListener('load',()=>{
   setTimeout(()=>{
     document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>{
       const r=el.getBoundingClientRect();
-      if(r.top<window.innerHeight&&r.bottom>0)el.classList.add('in');
+      if(r.top<window.innerHeight+200&&r.bottom>-200)revealEl(el);
     });
-  },100);
+  },200);
 });
+
+// Fallback absolu : révèle tout après 3s si IO a échoué
+setTimeout(()=>{
+  document.querySelectorAll('.clip-up,.fu,.fi,.lr,.sg').forEach(el=>{
+    if(!el.classList.contains('in'))revealEl(el);
+  });
+},3000);
 
 /* LIGHTBOX */
 const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lightboxImg');
